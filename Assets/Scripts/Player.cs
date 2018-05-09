@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
 		// wasd
 		// left stick for snes controller
 		moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-		if (moveInput.magnitude != 0) {
+		if (moveInput.sqrMagnitude != 0) {
 			// set lookDirection only if input is not 0
 			lookDirection = moveInput;
 		}
@@ -78,16 +78,18 @@ public class Player : MonoBehaviour {
 			break;
 		case ToolType.Hose:
 			// move away from the water coming out of the hose
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + lookDirection,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
 			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
 			break;
 		case ToolType.Extinguisher:
 			// move backwards away from the direction the extinguisher is shooting
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + lookDirection,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
 			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
 			break;
 
 		}
+
+		//transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
 
 	}
 

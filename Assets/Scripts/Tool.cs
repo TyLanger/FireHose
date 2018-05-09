@@ -95,4 +95,14 @@ public class Tool : MonoBehaviour {
 	{
 		return turnMultiplier;
 	}
+
+	public virtual Vector3 MoveTowards(Vector3 current, Vector3 input, float baseSpeed)
+	{
+		return Vector3.MoveTowards (current, current + input, baseSpeed);
+	}
+
+	public virtual Vector3 MoveTowards(Vector3 current, Vector3 forward, Vector3 input, float baseSpeed)
+	{
+		return Vector3.MoveTowards (current, current + input, baseSpeed);
+	}
 }

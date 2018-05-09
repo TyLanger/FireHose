@@ -53,14 +53,12 @@ public class Axe : Tool {
 
 	public override Vector3 MoveTowards(Vector3 current, Vector3 input, float baseSpeed)
 	{
-		// this doesn't work
-		// if the player never moves after pressing the use button
-		// input will always be 0
-		if (input.sqrMagnitude > 0) {
-			lookDirection = input;
-		}
+		// get the axe's parent's forward vector (the hand)
+		// could get axe's parent's parent's (player) forward
+		// is this better than the player just passing it in?
+		// player can rotate their character to rotate the axe
 
-		return Vector3.MoveTowards (current, current + lookDirection, baseSpeed);
+		return Vector3.MoveTowards (current, current + transform.parent.transform.forward, baseSpeed * speedMultiplier);
 	}
 
 	void OnTriggerEnter(Collider col)

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+
+public enum ToolType {None, Axe, Hose, Extinguisher };
 
 public class Tool : MonoBehaviour {
 
@@ -12,6 +15,14 @@ public class Tool : MonoBehaviour {
 	bool canPickUp = true;
 
 	Collider pickupCollider;
+
+	public ToolType toolType;
+	public float speedMultiplier = 1;
+	public float turnMultiplier = 1;
+
+	public event Action ToolFinishedAction;
+	public event Action ForcedMovement;
+
 
 	// Use this for initialization
 	void Start () {
@@ -49,13 +60,39 @@ public class Tool : MonoBehaviour {
 		pickupCollider.enabled = true;
 	}
 
+	/// Start using the tool
 	public virtual void Use()
 	{
 		//Debug.Log ("Used");
 	}
 
+	/// Stop using the tool
 	public virtual void StopUse()
 	{
 
+	}
+		
+	protected void ForcedMovementStarted()
+	{
+		if (ForcedMovement != null) {
+			ForcedMovement ();
+		}
+	}
+
+	protected void ToolFinished()
+	{
+		if (ToolFinishedAction != null) {
+			ToolFinishedAction ();
+		}
+	}
+
+	public virtual float GetSpeedMultiplier()
+	{
+		return speedMultiplier;
+	}
+
+	public virtual float GetTurnMultiplier()
+	{
+		return turnMultiplier;
 	}
 }

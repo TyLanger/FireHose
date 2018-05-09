@@ -36,12 +36,10 @@ public class House : MonoBehaviour {
 	/// Instantiates all the objects to make the house
 	void BuildHouse(Vector3 bottomLeftPos, Transform parent)
 	{
-		GameObject tempBlock;
 		for (int x = 0; x < xSize; x++) {
 			for (int z = 0; z < zSize; z++) {
 
-				tempBlock = Instantiate (groundFloor [x,z], bottomLeftPos + new Vector3 (x * gridSpacing, 0, z * gridSpacing), transform.rotation);
-				tempBlock.transform.parent = parent;
+				Instantiate (groundFloor [x,z], bottomLeftPos + new Vector3 (x * gridSpacing, 0, z * gridSpacing), transform.rotation, parent);
 
 
 			}

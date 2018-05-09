@@ -5,13 +5,16 @@ using UnityEngine;
 public class Axe : Tool {
 
 	int numDegrees = 90;
-	int numSwings = 3;
+	public int numSwings = 4;
 
 	bool swinging = false;
 
 	public IEnumerator SwingAxe()
 	{
 		swinging = true;
+
+		// the axe is now pulling the player
+		ForcedMovementStarted();
 		for (int s = 0; s < numSwings; s++) {
 			for (int i = 0; i < numDegrees / 9; i++) {
 
@@ -28,7 +31,9 @@ public class Axe : Tool {
 			}
 		}
 		swinging = false;
-
+		// the ability is over
+		// run this so anything subscribed to the action will know
+		ToolFinished ();
 	}
 
 	public override void Use ()

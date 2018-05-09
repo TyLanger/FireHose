@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+
+
 	public float moveSpeed = 1;
 	Vector3 moveInput;
 	public float turnSpeed = 1;
-	Vector3 lastMoveInput;
+	Vector3 lookDirection;
+
+	ToolType currentUsing;
 
 	// may change to make it so you can hold multiple of some things
 	bool holdingTool = false;
@@ -16,7 +20,8 @@ public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		lastMoveInput = transform.forward;
+		currentUsing = ToolType.None;
+		lookDirection = transform.forward;
 	}
 	
 	// Update is called once per frame
@@ -49,18 +54,41 @@ public class Player : MonoBehaviour {
 		// left stick for snes controller
 		moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 		if (moveInput.magnitude != 0) {
-			// set lastMoveInput only if input is not 0
-			lastMoveInput = moveInput;
+			// set lookDirection only if input is not 0
+			lookDirection = moveInput;
 		}
 
 	}
 
 	void FixedUpdate () {
-		transform.position = Vector3.MoveTowards(transform.position, transform.position + moveInput, moveSpeed * Time.fixedDeltaTime);
-		// use lastMove input so it is never 0
-		// lastMoveInput is the last "actual" input, no 0 when not pressing movement buttons
-		// makes character facec where they are moving
-		transform.forward = Vector3.RotateTowards (transform.forward, lastMoveInput, turnSpeed * Time.fixedDeltaTime, 1);
+		switch(currentUsing)
+		{
+		case ToolType.None:
+			// transform.forward*moveInput.magnitude makes the player have to do circles to turn around
+			// they always move forward and rely on turn speed to be able to turn. Multiplying by moveInput.magnitude makes it so the player doesn't move when not pressing anything
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + moveInput, moveSpeed * Time.fixedDeltaTime);
+			// use lastMove input so it is never 0
+			// lookDirection is the last "actual" input, no 0 when not pressing movement buttons
+			// makes character facec where they are moving
+			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, turnSpeed * Time.fixedDeltaTime, 1);
+			break;
+		case ToolType.Axe:
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+			break;
+		case ToolType.Hose:
+			// move away from the water coming out of the hose
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + lookDirection,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+			break;
+		case ToolType.Extinguisher:
+			// move backwards away from the direction the extinguisher is shooting
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + lookDirection,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+			break;
+
+		}
+
 	}
 
 	void StopTool()
@@ -73,8 +101,25 @@ public class Player : MonoBehaviour {
 	void UseTool()
 	{
 		if (holdingTool) {
+			
+			// get an action that tells the player when to start getting pushed by the object
+			currentTool.ForcedMovement -= ToolStarted;
+			currentTool.ForcedMovement += ToolStarted;
+			// get an action to tell the player when it can go back to regular movement
+			currentTool.ToolFinishedAction -= ToolFinished;
+			currentTool.ToolFinishedAction += ToolFinished;
 			currentTool.Use ();
 		}
+	}
+
+	void ToolStarted()
+	{
+		currentUsing = currentTool.toolType;
+	}
+
+	void ToolFinished()
+	{
+		currentUsing = ToolType.None;
 	}
 
 	void PickUp()

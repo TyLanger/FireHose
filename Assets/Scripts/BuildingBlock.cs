@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+public enum BlockType { Wall, Door, Floor, Furniture};
+
 public class BuildingBlock : MonoBehaviour {
 
 
-	public enum BlockType { Wall, Door, Floor, Furniture};
+	public BlockType blockType;
 
 	// takes this many seconds to set a light
 	// small fire takes this long to turn to a big fire
@@ -14,6 +16,7 @@ public class BuildingBlock : MonoBehaviour {
 	public float fuelSeconds = 10;
 	float currentFuelSeconds = 0;
 	bool onFire = false;
+	bool destroyedByFire = false;
 
 	float distantBurnMultiplier = 0.5f;
 
@@ -58,6 +61,7 @@ public class BuildingBlock : MonoBehaviour {
 			yield return new WaitForFixedUpdate();
 		}
 		// destroyed
+		destroyedByFire = true;
 		if (DestroyedByFire != null) {
 			DestroyedByFire ();
 		}
@@ -126,6 +130,21 @@ public class BuildingBlock : MonoBehaviour {
 					SetAlight ();
 				}
 				StartCoroutine (Burning ());
+			}
+		}
+	}
+
+	public void PutOutFire(float dousePower)
+	{
+		if (onFire && !destroyedByFire) {
+			currentFuelSeconds -= dousePower;
+			if (currentFuelSeconds < 0) {
+				// fire is put out
+				StopCoroutine (Burning ());
+				onFire = false;
+
+				// temporary to visually debug
+				transform.position = transform.position + new Vector3 (0, -0.25f, 0);
 			}
 		}
 	}

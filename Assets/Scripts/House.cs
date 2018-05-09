@@ -62,6 +62,8 @@ public class House : MonoBehaviour {
 		PlaceDoors ();
 
 		BuildHouse (transform.position, BlockParent.transform);
+		//RotateWalls ();
+
 
 		StartFire ();
 	}
@@ -81,6 +83,18 @@ public class House : MonoBehaviour {
 	void PlaceDoors()
 	{
 		groundFloor [xSize / 2, 0] = Door;
+	}
+
+	/// Rotate walls to the correct orientation
+	void RotateWalls()
+	{
+		for (int x = 0; x < xSize; x++) {
+			for (int z = 0; z < zSize; z++) {
+				if (groundFloor [x, z].GetComponentInChildren<BuildingBlock> ().blockType == BlockType.Wall) {
+					// check neighbours
+				}
+			}
+		}
 	}
 
 	void StartFire()

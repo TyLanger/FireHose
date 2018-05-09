@@ -25,16 +25,18 @@ public class Tool : MonoBehaviour {
 
 	public void PickUp(Transform parent)
 	{
-		// player uses this to pick it up
-		// parent is used to tell this where to be
-		//Debug.Log("Picked up");
+		if (canPickUp) {
+			// player uses this to pick it up
+			// parent is used to tell this where to be
+			//Debug.Log("Picked up");
 
-		transform.position = parent.position;
-		transform.rotation = parent.rotation;
-		transform.parent = parent;
-		canPickUp = false;
-		GetComponent<Rigidbody> ().useGravity = false;
-		pickupCollider.enabled = false;
+			transform.position = parent.position;
+			transform.rotation = parent.rotation;
+			transform.parent = parent;
+			canPickUp = false;
+			//GetComponent<Rigidbody> ().useGravity = false;
+			pickupCollider.enabled = false;
+		}
 	}
 
 	public void Drop()
@@ -43,7 +45,7 @@ public class Tool : MonoBehaviour {
 		// has nobody holding it
 		// just leave it where it is
 		canPickUp = true;
-		GetComponent<Rigidbody> ().useGravity = true;
+		//GetComponent<Rigidbody> ().useGravity = true;
 		pickupCollider.enabled = true;
 	}
 

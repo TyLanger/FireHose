@@ -17,6 +17,9 @@ public class Extinguisher : Tool {
 	float maxFuelRate = 1;
 	float currentFuelRate = 0;
 
+
+	float douseStrength = 3;
+
 	bool spraying = false;
 
 	IEnumerator Spray()
@@ -30,6 +33,13 @@ public class Extinguisher : Tool {
 			if (Time.time - timeStartedSpraying <= timeToFullSpray) {
 				// increase spray slowly
 				currentFuelRate = Mathf.Lerp(minFuelRate, maxFuelRate, (Time.time - timeStartedSpraying) / timeToFullSpray);
+			}
+
+			RaycastHit hit;
+			if (Physics.Raycast (transform.position, Vector3.forward, out hit, 6)) {
+				if (hit.collider.tag == "Fire") {
+					hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
+				}
 			}
 
 			// fire extinguisher has fuelSeconds worth of fuel

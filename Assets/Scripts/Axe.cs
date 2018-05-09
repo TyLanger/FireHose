@@ -65,7 +65,8 @@ public class Axe : Tool {
 	{
 		if (swinging) {
 			if (col.tag == "Door") {
-				Destroy (col.gameObject);
+				//Destroy (col.gameObject);
+				col.GetComponent<BuildingBlock> ().Break ();
 			}
 		}
 	}

@@ -15,6 +15,7 @@ public class House : MonoBehaviour {
 	public GameObject Door;
 
 	GameObject[,] groundFloor;
+	GameObject BlockParent;
 
 	void Update()
 	{
@@ -25,6 +26,11 @@ public class House : MonoBehaviour {
 
 	void Initialize()
 	{
+		if (BlockParent != null) {
+			Destroy (BlockParent);
+		}
+		BlockParent = new GameObject ("BlockParent");
+
 		groundFloor = new GameObject[xSize,zSize];
 		for (int x = 0; x < xSize; x++) {
 			for (int z = 0; z < zSize; z++) {
@@ -39,8 +45,9 @@ public class House : MonoBehaviour {
 		for (int x = 0; x < xSize; x++) {
 			for (int z = 0; z < zSize; z++) {
 
-				Instantiate (groundFloor [x,z], bottomLeftPos + new Vector3 (x * gridSpacing, 0, z * gridSpacing), transform.rotation, parent);
-
+				var copy = Instantiate (groundFloor [x,z], bottomLeftPos + new Vector3 (x * gridSpacing, 0, z * gridSpacing), transform.rotation, parent);
+				copy.GetComponentInChildren<BuildingBlock> ().Initialize (ref groundFloor, x, z);
+				groundFloor [x, z] = copy;
 
 			}
 		}
@@ -48,12 +55,15 @@ public class House : MonoBehaviour {
 
 	public void CreateNewHouse()
 	{
+		
 		Initialize ();
 		SetOuterWalls ();
 
 		PlaceDoors ();
 
-		BuildHouse (transform.position, transform);
+		BuildHouse (transform.position, BlockParent.transform);
+
+		StartFire ();
 	}
 
 	void SetOuterWalls()
@@ -71,5 +81,14 @@ public class House : MonoBehaviour {
 	void PlaceDoors()
 	{
 		groundFloor [xSize / 2, 0] = Door;
+	}
+
+	void StartFire()
+	{
+		int x = Random.Range (0, xSize);
+		int z = Random.Range (0, zSize);
+		Debug.Log ("Starting fire at " + x + ", " + z);
+		groundFloor [x,z].GetComponentInChildren<BuildingBlock> ().Burn (100);
+		//groundFloor[x,z].GetC
 	}
 }

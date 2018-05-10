@@ -25,10 +25,13 @@ public class Extinguisher : Tool {
 
 	bool spraying = false;
 
+	public ParticleSystem particles;
+
 	protected override void Start()
 	{
 		base.Start ();	
 		currentFuelSeconds = fuelSeconds;
+		//particles = GetComponent<ParticleSystem> ();
 	}
 
 	IEnumerator Spray()
@@ -42,6 +45,10 @@ public class Extinguisher : Tool {
 			if (Time.time - timeStartedSpraying <= timeToFullSpray) {
 				// increase spray slowly
 				currentFuelRate = Mathf.Lerp(minFuelRate, maxFuelRate, (Time.time - timeStartedSpraying) / timeToFullSpray);
+			}
+
+			if (!particles.isEmitting) {
+				particles.Play ();
 			}
 
 			float angle;
@@ -100,6 +107,7 @@ public class Extinguisher : Tool {
 	void OutOfFuel()
 	{
 		ToolFinished ();
+		particles.Stop ();
 	}
 
 	public override void Use()
@@ -118,6 +126,7 @@ public class Extinguisher : Tool {
 			spraying = false;
 			StopCoroutine ("Spray");
 			ToolFinished ();
+			particles.Stop ();
 		}
 		// recharges slowly when not in use
 		StartCoroutine ("Recharge");

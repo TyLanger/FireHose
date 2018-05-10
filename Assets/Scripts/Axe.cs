@@ -12,6 +12,14 @@ public class Axe : Tool {
 	bool swinging = false;
 	Vector3 lookDirection = Vector3.forward;
 
+	Collider axeTrigger;
+
+	protected override void Start()
+	{
+		base.Start ();
+		axeTrigger = GetComponent<Collider> ();
+	}
+
 	public IEnumerator SwingAxe()
 	{
 		swinging = true;
@@ -19,6 +27,7 @@ public class Axe : Tool {
 		// the axe is now pulling the player
 		ForcedMovementStarted();
 		for (int s = 0; s < numSwings; s++) {
+			axeTrigger.enabled = true;
 			for (int i = 0; i < numDegrees / 9; i++) {
 
 				//swing axe down
@@ -26,6 +35,7 @@ public class Axe : Tool {
 
 				yield return null;
 			}
+			axeTrigger.enabled = false;
 			for (int j = 0; j < numDegrees / 9; j++) {
 				// pull axe back up
 				transform.RotateAround (transform.position, transform.right, -9);

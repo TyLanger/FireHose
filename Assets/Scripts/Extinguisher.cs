@@ -36,9 +36,9 @@ public class Extinguisher : Tool {
 			}
 
 			RaycastHit hit;
-			if (Physics.Raycast (transform.position, Vector3.forward, out hit, 6)) {
+			if (Physics.Raycast (transform.position, transform.forward, out hit, 6)) {
 				if (hit.collider.tag == "Fire") {
-					hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
+					hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength * 10);
 				}
 			}
 

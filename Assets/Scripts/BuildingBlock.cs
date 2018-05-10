@@ -52,7 +52,9 @@ public class BuildingBlock : MonoBehaviour {
 		}
 		// now a big fire
 		// temporary to see where the fire is
-		transform.position = transform.position + new Vector3(0, 0.1f, 0);
+		//transform.position = transform.position + new Vector3(0, 0.1f, 0);
+		transform.FindChild ("Fire").localScale *= 1.1f;
+
 
 		currentFuelSeconds = 0;
 		while (currentFuelSeconds < fuelSeconds) {
@@ -125,7 +127,8 @@ public class BuildingBlock : MonoBehaviour {
 				currentFuelSeconds = 0;
 
 				// temporary to see where the fire is
-				transform.position = transform.position + new Vector3(0, 0.1f, 0);
+				//transform.position = transform.position + new Vector3(0, 0.1f, 0);
+				transform.FindChild ("Fire").gameObject.SetActive (true);
 				if (SetAlight != null) {
 					SetAlight ();
 				}
@@ -142,9 +145,11 @@ public class BuildingBlock : MonoBehaviour {
 				// fire is put out
 				StopCoroutine (Burning ());
 				onFire = false;
-
+				currentFuelSeconds = 0;
 				// temporary to visually debug
-				transform.position = transform.position + new Vector3 (0, -0.25f, 0);
+				//transform.position = transform.position + new Vector3 (0, -0.25f, 0);
+				transform.FindChild ("Fire").gameObject.SetActive (false);
+
 			}
 		}
 	}

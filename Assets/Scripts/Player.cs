@@ -33,13 +33,13 @@ public class Player : MonoBehaviour {
 			PickUp();
 		}
 		if (Input.GetButtonDown ("Fire2")) {
-			// righ click
+			// right click
 			// B button on snes controller
 			//Debug.Log ("Fire2");
 			UseTool();
 		}
 		if (Input.GetButtonUp ("Fire2")) {
-			// righ click
+			// right click
 			// B button on snes controller
 			//Debug.Log ("Fire2");
 			StopTool();

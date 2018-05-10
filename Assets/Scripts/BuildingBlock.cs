@@ -10,10 +10,13 @@ public class BuildingBlock : MonoBehaviour {
 
 	public BlockType blockType;
 
-	// takes this many seconds to set a light
-	// small fire takes this long to turn to a big fire
-	// burns for this long before it's destroyed
-	public float fuelSeconds = 10;
+
+
+
+	//public float fuelSeconds = 10;
+	public float lightTime = 10;			// takes this many seconds to set a light
+	public float growthTime = 10;			// small fire takes this long to turn to a big fire
+	public float destroyTime = 20;			// burns for this long before it's destroyed
 	float currentFuelSeconds = 0;
 	bool onFire = false;
 	bool destroyedByFire = false;
@@ -30,7 +33,10 @@ public class BuildingBlock : MonoBehaviour {
 	// if over 10, cannot be destroyed by hand
 	// otherwise, player needs to pull on it for that many seconds?
 	// some structures > 20 cannot be destroyed by axe (concrete, steel)
-	int hitPoints = 10;
+	public int hitPoints = 5;
+	// strength needed to do any damage
+	// if the strngth is higher than this, do damage
+	public int breakThreshold = 0;
 
 	GameObject[,] grid;
 	int xPos;
@@ -46,7 +52,7 @@ public class BuildingBlock : MonoBehaviour {
 
 	IEnumerator Burning()
 	{
-		while (currentFuelSeconds < fuelSeconds) {
+		while (currentFuelSeconds < growthTime) {
 			currentFuelSeconds += Time.fixedDeltaTime;
 			yield return new WaitForFixedUpdate();
 		}
@@ -56,8 +62,8 @@ public class BuildingBlock : MonoBehaviour {
 		transform.FindChild ("Fire").localScale *= 1.1f;
 
 
-		currentFuelSeconds = 0;
-		while (currentFuelSeconds < fuelSeconds) {
+		//currentFuelSeconds = 0;
+		while (currentFuelSeconds < destroyTime+growthTime) {
 			currentFuelSeconds += Time.fixedDeltaTime;
 			BurnNeighbours ();
 			yield return new WaitForFixedUpdate();
@@ -124,7 +130,7 @@ public class BuildingBlock : MonoBehaviour {
 	{
 		if (!onFire) {
 			currentFuelSeconds += heat;
-			if (currentFuelSeconds > fuelSeconds) {
+			if (currentFuelSeconds > lightTime) {
 				onFire = true;
 				currentFuelSeconds = 0;
 
@@ -156,10 +162,16 @@ public class BuildingBlock : MonoBehaviour {
 		}
 	}
 
-	public void Break()
+	public void Break(int breakStrength)
 	{
-		// break this object with fists or an axe
-		GetComponent<Collider>().enabled = false;
+		if (breakStrength > breakThreshold) {
+			hitPoints -= breakStrength;
+			if (hitPoints <= 0) {
+				// break this object with fists or an axe
+				GetComponent<Collider> ().enabled = false;
+				GetComponent<MeshRenderer>().enabled = false;
+			}
+		}
 	}
 		
 

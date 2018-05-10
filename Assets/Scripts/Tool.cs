@@ -25,7 +25,7 @@ public class Tool : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
+	protected virtual void Start () {
 		pickupCollider = GetComponent<SphereCollider> ();
 	}
 	

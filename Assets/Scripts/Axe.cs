@@ -7,6 +7,8 @@ public class Axe : Tool {
 	int numDegrees = 90;
 	public int numSwings = 4;
 
+	public int breakStrength = 5;
+
 	bool swinging = false;
 	Vector3 lookDirection = Vector3.forward;
 
@@ -64,9 +66,10 @@ public class Axe : Tool {
 	void OnTriggerEnter(Collider col)
 	{
 		if (swinging) {
-			if (col.tag == "Door") {
+			if(col.GetComponent<BuildingBlock>() != null) {
+			//if (col.tag == "Door") {
 				//Destroy (col.gameObject);
-				col.GetComponent<BuildingBlock> ().Break ();
+				col.GetComponent<BuildingBlock> ().Break (breakStrength);
 			}
 		}
 	}

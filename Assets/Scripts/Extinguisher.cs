@@ -11,6 +11,8 @@ public class Extinguisher : Tool {
 
 	// how many seconds you can spray for
 	public float fuelSeconds = 6;
+	public float currentFuelSeconds;
+	public float rechargeRate = 0.25f;
 
 	public float timeToFullSpray = 2;
 	float timeStartedSpraying = 0;
@@ -23,6 +25,12 @@ public class Extinguisher : Tool {
 
 	bool spraying = false;
 
+	protected override void Start()
+	{
+		base.Start ();	
+		currentFuelSeconds = fuelSeconds;
+	}
+
 	IEnumerator Spray()
 	{
 		spraying = true;
@@ -30,7 +38,7 @@ public class Extinguisher : Tool {
 
 		timeStartedSpraying = Time.time;
 		// constantly spawn foam particles
-		while (fuelSeconds > 0) {
+		while (currentFuelSeconds > 0) {
 			if (Time.time - timeStartedSpraying <= timeToFullSpray) {
 				// increase spray slowly
 				currentFuelRate = Mathf.Lerp(minFuelRate, maxFuelRate, (Time.time - timeStartedSpraying) / timeToFullSpray);
@@ -70,12 +78,23 @@ public class Extinguisher : Tool {
 			// the fire extinguisher will take timeToFullSpray seconds to get to full spray
 			// fuel is then only consumed at a fraction of the full power when not at full spray
 			// multiply by Time.fixedDeltaTime because this method runs every Time.fixedDeltaTime seconds
-			fuelSeconds -= currentFuelRate * Time.fixedDeltaTime;
+			currentFuelSeconds -= currentFuelRate * Time.fixedDeltaTime;
 			yield return new WaitForFixedUpdate ();
 		}
 		// ran out of fuel
 		spraying = false;
 		OutOfFuel ();
+	}
+
+	IEnumerator Recharge()
+	{
+		while (currentFuelSeconds < fuelSeconds) {
+
+			currentFuelSeconds += rechargeRate * Time.fixedDeltaTime;
+
+			yield return new WaitForFixedUpdate ();
+		}
+			
 	}
 
 	void OutOfFuel()
@@ -87,6 +106,8 @@ public class Extinguisher : Tool {
 	{
 		base.Use ();
 		StartCoroutine ("Spray");
+		// stop recharging while being used
+		StopCoroutine ("Recharge");
 	}
 
 	public override void StopUse()
@@ -98,6 +119,8 @@ public class Extinguisher : Tool {
 			StopCoroutine ("Spray");
 			ToolFinished ();
 		}
+		// recharges slowly when not in use
+		StartCoroutine ("Recharge");
 	}
 
 	public override float GetSpeedMultiplier()

@@ -18,6 +18,10 @@ public class Player : MonoBehaviour {
 	Tool currentTool;
 	public Transform hand;
 
+	// the effectiveness of doing tasks without the right tools
+	int unarmedDouseStrength = 35;
+	int unarmedBreakStrength = 1;
+
 	// Use this for initialization
 	void Start () {
 		currentUsing = ToolType.None;
@@ -112,6 +116,24 @@ public class Player : MonoBehaviour {
 			currentTool.ToolFinishedAction -= ToolFinished;
 			currentTool.ToolFinishedAction += ToolFinished;
 			currentTool.Use ();
+		} else {
+			// figure out what task to attempt
+
+			// break down door
+			RaycastHit hit;
+			if (Physics.Raycast (transform.position, transform.forward, out hit, 3)) {
+				if (hit.collider.GetComponent<BuildingBlock> () != null) {
+					if (hit.collider.GetComponent<BuildingBlock> ().blockType == BlockType.Door) {
+						// hit a door
+						// try to break it down
+						hit.collider.GetComponent<BuildingBlock> ().Break (unarmedBreakStrength);
+					}
+				} else if (hit.collider.tag == "Fire") {
+					hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (unarmedDouseStrength * Time.fixedDeltaTime);
+				}
+			}
+
+			// stomp out fire
 		}
 	}
 

@@ -7,6 +7,7 @@ public class Extinguisher : Tool {
 
 	// degrees
 	public float sprayCone = 60;
+	public float sprayDistance = 6;
 
 	// how many seconds you can spray for
 	public float fuelSeconds = 6;
@@ -18,7 +19,7 @@ public class Extinguisher : Tool {
 	float currentFuelRate = 0;
 
 
-	float douseStrength = 3;
+	public float douseStrength = 30;
 
 	bool spraying = false;
 
@@ -35,12 +36,34 @@ public class Extinguisher : Tool {
 				currentFuelRate = Mathf.Lerp(minFuelRate, maxFuelRate, (Time.time - timeStartedSpraying) / timeToFullSpray);
 			}
 
+			float angle;
+			Vector3 direction;
 			RaycastHit hit;
-			if (Physics.Raycast (transform.position, Vector3.forward, out hit, 6)) {
+
+			for (int i = 0; i <= sprayCone * 0.1f; i++) {
+
+				// every 10 degrees
+				// Cos and sin use radians so convert to radians
+				// iterate from +30 degrees to -30 degrees
+				angle = (sprayCone * 0.5f - (10) * i) * Mathf.Deg2Rad;
+				direction = new Vector3((transform.forward.x * Mathf.Cos(angle) - (transform.forward.z * Mathf.Sin(angle))), 0, transform.forward.x * Mathf.Sin(angle) + transform.forward.z * Mathf.Cos(angle));
+				// fire a ray every 10 degrees
+				//Ray r = new Ray(transform.position, direction);
+				Debug.DrawLine(transform.position, transform.position + direction * sprayDistance, Color.blue);
+				if (Physics.Raycast (transform.position, direction, out hit, sprayDistance)) {
+					if (hit.collider.tag == "Fire") {
+						hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
+					}
+				}
+			}
+			/*
+			RaycastHit hit;
+			//Debug.DrawLine (transform.position, transform.position + transform.forward * 6, Color.blue);
+			if (Physics.Raycast (transform.position, transform.forward, out hit, sprayDistance)) {
 				if (hit.collider.tag == "Fire") {
 					hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
 				}
-			}
+			}*/
 
 			// fire extinguisher has fuelSeconds worth of fuel
 			// this is how many secconds it can fire at full power

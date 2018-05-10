@@ -64,6 +64,8 @@ public class BuildingBlock : MonoBehaviour {
 		}
 		// destroyed
 		destroyedByFire = true;
+		transform.FindChild ("Fire").localScale = Vector3.one * 0.5f;;
+
 		if (DestroyedByFire != null) {
 			DestroyedByFire ();
 		}
@@ -132,7 +134,7 @@ public class BuildingBlock : MonoBehaviour {
 				if (SetAlight != null) {
 					SetAlight ();
 				}
-				StartCoroutine (Burning ());
+				StartCoroutine ("Burning");
 			}
 		}
 	}
@@ -143,7 +145,7 @@ public class BuildingBlock : MonoBehaviour {
 			currentFuelSeconds -= dousePower;
 			if (currentFuelSeconds < 0) {
 				// fire is put out
-				StopCoroutine (Burning ());
+				StopCoroutine ("Burning");
 				onFire = false;
 				currentFuelSeconds = 0;
 				// temporary to visually debug

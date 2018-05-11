@@ -10,7 +10,6 @@ public class Axe : Tool {
 	public int breakStrength = 5;
 
 	bool swinging = false;
-	Vector3 lookDirection = Vector3.forward;
 
 	Collider axeTrigger;
 

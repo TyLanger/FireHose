@@ -10,58 +10,86 @@ public class GameManager : MonoBehaviour {
 
 	public Player player;
 
-	bool p1Spawned = false;
-	bool p2Spawned = false;
-	bool p3Spawned = false;
-	bool p4Spawned = false;
+	Player player1;
+	Player player2;
+	Player player3;
+	Player player4;
+
+	// default spawn points
+	Vector3 p1Spawn = new Vector3(1, 1.5f, 0);
+	Vector3 p2Spawn = new Vector3(3, 1.5f, 0);
+	Vector3 p3Spawn = new Vector3(1, 1.5f, -2);
+	Vector3 p4Spawn = new Vector3(3, 1.5f, -2);
+
+	bool p1Joined = false;
+	bool p2Joined = false;
+	bool p3Joined = false;
+	bool p4Joined = false;
 
 	int numPlayers = 0;
 
 	// Use this for initialization
 	void Start () {
-		
+		SpawnPlayers ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 		// Joysticks are in the order they were plugged in
-		if (!p1Spawned) {
+		if (!p1Joined) {
 			if (Input.GetButtonDown ("Pickup_P1")) {
 				Debug.Log ("Player 1 joined");
-				p1Spawned = true;
+				p1Joined = true;
 				numPlayers++;
-				var copy = Instantiate (player, transform.position, Quaternion.identity);
-				copy.Setup ("Horizontal_P1", "Vertical_P1", "Pickup_P1", "Use_P1");
+				// set up controls when you get input from the controller
+				player1.Setup ("Horizontal_P1", "Vertical_P1", "Pickup_P1", "Use_P1");
 			}
 		}
-		if (!p2Spawned) {
+		if (!p2Joined) {
 			if (Input.GetButtonDown ("Pickup_P2")) {
 				Debug.Log ("Player 2 joined");
-				p2Spawned = true;
+				p2Joined = true;
 				numPlayers++;
-				var copy = Instantiate (player, transform.position + new Vector3 (1, 0, 0), Quaternion.identity);
-				copy.Setup ("Horizontal_P2", "Vertical_P2", "Pickup_P2", "Use_P2");
+
+				player2.Setup ("Horizontal_P2", "Vertical_P2", "Pickup_P2", "Use_P2");
 			}
 		}
-		if (!p3Spawned) {
+		if (!p3Joined) {
 			if (Input.GetButtonDown ("Pickup_P3")) {
 				Debug.Log ("Player 3 joined");
-				p3Spawned = true;
+				p3Joined = true;
 				numPlayers++;
-				var copy = Instantiate (player, transform.position + new Vector3 (2, 0, 0), Quaternion.identity);
-				copy.Setup ("Horizontal_P3", "Vertical_P3", "Pickup_P3", "Use_P3");
+
+				player3.Setup ("Horizontal_P3", "Vertical_P3", "Pickup_P3", "Use_P3");
 			}
 		}
-		if (!p4Spawned) {
+		if (!p4Joined) {
 			if (Input.GetButtonDown ("Pickup_P4")) {
 				Debug.Log ("Player 4 joined");
-				p4Spawned = true;
+				p4Joined = true;
 				numPlayers++;
-				var copy = Instantiate (player, transform.position + new Vector3 (3, 0, 0), Quaternion.identity);
-				copy.Setup ("Horizontal_P4", "Vertical_P4", "Pickup_P4", "Use_P4");
+
+				player4.Setup ("Horizontal_P4", "Vertical_P4", "Pickup_P4", "Use_P4");
 			}
 		}
+
+	}
+
+	void SpawnPlayers()
+	{
+		// spawn all 4 characters at the start
+		// they only start to move once their respective joystick has been moved
+		// any characters not joined by the time the leve starts just get left behind at the fire hall
+		// they still exist in the world, but they'll just be napping at a table or something
+		player1 = Instantiate (player, p1Spawn, Quaternion.identity);
+		player1.GetComponent<Renderer> ().material.color = Color.red;
+		player2 = Instantiate (player, p2Spawn, Quaternion.identity);
+		player2.GetComponent<Renderer> ().material.color = Color.blue;
+		player3 = Instantiate (player, p3Spawn, Quaternion.identity);
+		player3.GetComponent<Renderer> ().material.color = Color.green;
+		player4 = Instantiate (player, p4Spawn, Quaternion.identity);
+		player4.GetComponent<Renderer> ().material.color = Color.yellow;
 
 	}
 }

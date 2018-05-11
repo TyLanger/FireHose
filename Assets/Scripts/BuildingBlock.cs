@@ -27,12 +27,7 @@ public class BuildingBlock : MonoBehaviour {
 	public event Action DestroyedByFire;
 
 
-	// doors and furniture can be destroyed by hand
-	bool canBeDestroyedByHand = false;
-	// hitpoints style
-	// if over 10, cannot be destroyed by hand
-	// otherwise, player needs to pull on it for that many seconds?
-	// some structures > 20 cannot be destroyed by axe (concrete, steel)
+	// doors and furniture can be destroyed by hand, but not walls (they need an axe)
 	public int hitPoints = 5;
 	// strength needed to do any damage
 	// if the strngth is higher than this, do damage

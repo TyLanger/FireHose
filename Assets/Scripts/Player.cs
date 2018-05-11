@@ -172,9 +172,11 @@ public class Player : MonoBehaviour {
 				//Debug.Log ("Hit something");
 				if (hit.collider.GetComponent<Tool> () != null) {
 					// hit a tool
-					currentTool = hit.collider.GetComponent<Tool>();
-					currentTool.PickUp(hand);
-					holdingTool = true;
+					if (hit.collider.GetComponent<Tool> ().CanPickup ()) {
+						currentTool = hit.collider.GetComponent<Tool> ();
+						currentTool.PickUp (hand);
+						holdingTool = true;
+					}
 				}
 			}
 		}

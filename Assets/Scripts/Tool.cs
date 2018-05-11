@@ -34,6 +34,11 @@ public class Tool : MonoBehaviour {
 		//transform.position = parentPos + offset; 
 	}
 
+	public bool CanPickup()
+	{
+		return canPickUp;
+	}
+
 	public void PickUp(Transform parent)
 	{
 		if (canPickUp) {

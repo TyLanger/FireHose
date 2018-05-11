@@ -22,6 +22,13 @@ public class Player : MonoBehaviour {
 	int unarmedDouseStrength = 35;
 	int unarmedBreakStrength = 1;
 
+
+	// Default to keyboard config for easy testing
+	string horizontalInput = "Horizontal";
+	string verticalInput = "Vertical";
+	string pickupInput = "Fire1";
+	string useInput = "Fire2";
+
 	// Use this for initialization
 	void Start () {
 		currentUsing = ToolType.None;
@@ -30,33 +37,28 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown ("Fire1")) {
+		if (Input.GetButtonDown (pickupInput)) {
 			// left click
 			// A button on snes controller
 			//Debug.Log ("Fire1");
 			PickUp();
 		}
-		if (Input.GetButtonDown ("Fire2")) {
+		if (Input.GetButtonDown (useInput)) {
 			// right click
 			// B button on snes controller
 			//Debug.Log ("Fire2");
 			UseTool();
 		}
-		if (Input.GetButtonUp ("Fire2")) {
+		if (Input.GetButtonUp (useInput)) {
 			// right click
 			// B button on snes controller
 			//Debug.Log ("Fire2");
 			StopTool();
 		}
-		if (Input.GetButtonDown ("Fire3")) {
-			// middle mouse button
-			// not bound on snes
-			Debug.Log ("Fire3");
-		}
 
 		// wasd
 		// left stick for snes controller
-		moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		moveInput = new Vector3(Input.GetAxisRaw(horizontalInput), 0, Input.GetAxisRaw(verticalInput));
 		if (moveInput.sqrMagnitude != 0) {
 			// set lookDirection only if input is not 0
 			lookDirection = moveInput;
@@ -96,6 +98,14 @@ public class Player : MonoBehaviour {
 
 		//transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
 
+	}
+
+	public void Setup(string horName, string vertName, string pickupName, string useName)
+	{
+		horizontalInput = horName;
+		verticalInput = vertName;
+		pickupInput = pickupName;
+		useInput = useName;
 	}
 
 	void StopTool()

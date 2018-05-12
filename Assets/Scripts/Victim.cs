@@ -39,8 +39,8 @@ public class Victim : Tool {
 
 	IEnumerator Toss()
 	{
-		if (GetComponent<Rigidbody> () != null) {
-			GetComponent<Rigidbody> ().AddForce ((transform.forward + new Vector3 (0, 1, 0)) * throwForce);
+		if (physicsObject != null) {
+			physicsObject.GetComponent<Rigidbody>().AddForce ((transform.forward + new Vector3 (0, 1, 0)) * throwForce);
 		}
 
 		yield return new WaitForFixedUpdate();

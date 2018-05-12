@@ -15,6 +15,8 @@ public class Tool : MonoBehaviour {
 	bool canPickUp = true;
 
 	Collider pickupCollider;
+	//GameObject visuals;
+	protected GameObject physicsObject;
 
 	public ToolType toolType;
 	public float speedMultiplier = 1;
@@ -26,7 +28,9 @@ public class Tool : MonoBehaviour {
 
 	// Use this for initialization
 	protected virtual void Start () {
-		pickupCollider = GetComponent<SphereCollider> ();
+		//pickupCollider = GetComponent<SphereCollider> ();
+		pickupCollider = GetComponentInParent<SphereCollider> ();
+		physicsObject = GetComponentInParent<Rigidbody> ().gameObject;
 	}
 	
 	// Update is called once per frame
@@ -49,6 +53,31 @@ public class Tool : MonoBehaviour {
 			transform.position = parent.position;
 			transform.rotation = parent.rotation;
 			transform.parent = parent;
+
+			// new system
+			// rigidbody component stays behind
+			// visuals get given to the player
+			/*
+			visuals.transform.position = parent.position;
+			visuals.transform.rotation = parent.rotation;
+			visuals.transform.parent = parent;
+			// does setting this gameobject inactive make the script not work?
+			// probably
+			// should the script go on the visuals or the rigidbody?
+			gameObject.SetActive (false);
+			*/
+
+			// new system 2
+			// script is attached to the visuals
+			// Would need to change player's pickup code
+			// swap GetComponent for GetComponentInChild would probably do the trick
+
+			transform.position = parent.position;
+			transform.rotation = parent.rotation;
+			transform.parent = parent;
+			physicsObject.SetActive (false);
+
+
 			canPickUp = false;
 			//GetComponent<Rigidbody> ().useGravity = false;
 			pickupCollider.enabled = false;
@@ -60,6 +89,27 @@ public class Tool : MonoBehaviour {
 		transform.parent = null;
 		// has nobody holding it
 		// just leave it where it is
+
+		// new split system
+		/*
+		transform.position = visuals.transform.position;
+		transform.rotation = visuals.transform.rotation;
+		visuals.transform.parent = gameObject;
+		gameObject.SetActive(true);
+		*/
+
+		// new system 2
+		// script is attached to the visuals
+		// Move physics object to where visuals currently are
+		// change visuals back to being child of physics object
+
+		physicsObject.transform.position = transform.position;
+		physicsObject.transform.rotation = transform.rotation;
+		transform.parent = physicsObject.transform;
+		physicsObject.SetActive (true);
+
+
+
 		canPickUp = true;
 		//GetComponent<Rigidbody> ().useGravity = true;
 		pickupCollider.enabled = true;

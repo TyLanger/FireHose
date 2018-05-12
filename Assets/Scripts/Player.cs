@@ -170,10 +170,10 @@ public class Player : MonoBehaviour {
 			RaycastHit hit;
 			if (Physics.Raycast (transform.position, transform.forward, out hit, 2)) {
 				//Debug.Log ("Hit something");
-				if (hit.collider.GetComponent<Tool> () != null) {
+				if (hit.collider.GetComponentInChildren<Tool> () != null) {
 					// hit a tool
-					if (hit.collider.GetComponent<Tool> ().CanPickup ()) {
-						currentTool = hit.collider.GetComponent<Tool> ();
+					if (hit.collider.GetComponentInChildren<Tool> ().CanPickup ()) {
+						currentTool = hit.collider.GetComponentInChildren<Tool> ();
 
 						// set up Forced movement before you call tool.pickup()
 						// this is for the people you have to carry that slow you down

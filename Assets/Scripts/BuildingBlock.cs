@@ -25,6 +25,7 @@ public class BuildingBlock : MonoBehaviour {
 
 	public event Action SetAlight;
 	public event Action DestroyedByFire;
+	public event Action FireQuenched;
 
 
 	// doors and furniture can be destroyed by hand, but not walls (they need an axe)
@@ -153,6 +154,9 @@ public class BuildingBlock : MonoBehaviour {
 				//transform.position = transform.position + new Vector3 (0, -0.25f, 0);
 				transform.FindChild ("Fire").gameObject.SetActive (false);
 
+				if (FireQuenched != null) {
+					FireQuenched ();
+				}
 			}
 		}
 	}

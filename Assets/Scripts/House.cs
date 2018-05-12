@@ -17,6 +17,9 @@ public class House : MonoBehaviour {
 	GameObject[,] groundFloor;
 	GameObject BlockParent;
 
+	public int numFiresStarted = 0;
+	public int numFiresPutOut = 0;
+
 	void Update()
 	{
 		if (Input.GetButtonDown ("Jump")) {
@@ -48,6 +51,11 @@ public class House : MonoBehaviour {
 				var copy = Instantiate (groundFloor [x,z], bottomLeftPos + new Vector3 (x * gridSpacing, 0, z * gridSpacing), transform.rotation, parent);
 				copy.GetComponentInChildren<BuildingBlock> ().Initialize (ref groundFloor, x, z);
 				groundFloor [x, z] = copy;
+
+				// set up actions
+				copy.GetComponentInChildren<BuildingBlock>().SetAlight += NewFireStarted;
+				//copy.GetComponent<BuildingBlock>().DestroyedByFire += NewFireStarted;
+				copy.GetComponentInChildren<BuildingBlock>().FireQuenched += FirePutOut;
 
 			}
 		}
@@ -104,5 +112,20 @@ public class House : MonoBehaviour {
 		Debug.Log ("Starting fire at " + x + ", " + z);
 		groundFloor [x,z].GetComponentInChildren<BuildingBlock> ().Burn (100);
 		//groundFloor[x,z].GetC
+	}
+
+	void NewFireStarted()
+	{
+		numFiresStarted++;
+	}
+
+	void FirePutOut()
+	{
+		numFiresPutOut++;
+	}
+
+	void BlockDestroyed()
+	{
+
 	}
 }

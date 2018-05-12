@@ -162,9 +162,13 @@ public class Player : MonoBehaviour {
 		if (holdingTool) {
 			// drop object
 			if (currentTool != null) {
-				currentTool.Drop ();
+				if (currentTool.CanDrop ()) {
+					// check if the tool lets you drop it at this moment
+					// can't drop an axe while swinging
+					currentTool.Drop ();
+					DropTool ();
+				}
 			}
-			DropTool ();
 		} else {
 			// pick up object in front of you
 			RaycastHit hit;

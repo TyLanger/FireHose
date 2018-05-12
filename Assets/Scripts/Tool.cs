@@ -13,6 +13,7 @@ public class Tool : MonoBehaviour {
 	//public Vector3 offset;
 
 	bool canPickUp = true;
+	protected bool canDrop = true;
 
 	Collider pickupCollider;
 	//GameObject visuals;
@@ -41,6 +42,11 @@ public class Tool : MonoBehaviour {
 	public bool CanPickup()
 	{
 		return canPickUp;
+	}
+
+	public bool CanDrop()
+	{
+		return canDrop;
 	}
 
 	public virtual void PickUp(Transform parent)
@@ -127,14 +133,14 @@ public class Tool : MonoBehaviour {
 
 	}
 		
-	protected void ForcedMovementStarted()
+	protected virtual void ForcedMovementStarted()
 	{
 		if (ForcedMovement != null) {
 			ForcedMovement ();
 		}
 	}
 
-	protected void ToolFinished()
+	protected virtual void ToolFinished()
 	{
 		if (ToolFinishedAction != null) {
 			ToolFinishedAction ();

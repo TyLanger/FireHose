@@ -132,6 +132,12 @@ public class Extinguisher : Tool {
 		StartCoroutine ("Recharge");
 	}
 
+	public override void Drop ()
+	{
+		ToolFinished ();
+		base.Drop ();
+	}
+
 	public override float GetSpeedMultiplier()
 	{
 		return speedMultiplier * currentFuelRate;

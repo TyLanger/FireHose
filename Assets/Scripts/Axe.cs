@@ -72,6 +72,18 @@ public class Axe : Tool {
 		return Vector3.MoveTowards (current, current + transform.parent.transform.forward, baseSpeed * speedMultiplier);
 	}
 
+	protected override void ForcedMovementStarted ()
+	{
+		base.ForcedMovementStarted ();
+		canDrop = false;
+	}
+
+	protected override void ToolFinished ()
+	{
+		canDrop = true;
+		base.ToolFinished ();
+	}
+
 	void OnTriggerEnter(Collider col)
 	{
 		if (swinging) {

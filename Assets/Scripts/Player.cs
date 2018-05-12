@@ -93,7 +93,12 @@ public class Player : MonoBehaviour {
 			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
 			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
 			break;
-
+		case ToolType.Victim:
+			// can move normally
+			// just slower
+			transform.position = Vector3.MoveTowards (transform.position, transform.position + moveInput, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+			break;
 		}
 
 		//transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
@@ -119,12 +124,7 @@ public class Player : MonoBehaviour {
 	{
 		if (holdingTool) {
 			
-			// get an action that tells the player when to start getting pushed by the object
-			currentTool.ForcedMovement -= ToolStarted;
-			currentTool.ForcedMovement += ToolStarted;
-			// get an action to tell the player when it can go back to regular movement
-			currentTool.ToolFinishedAction -= ToolFinished;
-			currentTool.ToolFinishedAction += ToolFinished;
+
 			currentTool.Use ();
 		} else {
 			// figure out what task to attempt
@@ -164,7 +164,7 @@ public class Player : MonoBehaviour {
 			if (currentTool != null) {
 				currentTool.Drop ();
 			}
-			holdingTool = false;
+			DropTool ();
 		} else {
 			// pick up object in front of you
 			RaycastHit hit;
@@ -174,11 +174,26 @@ public class Player : MonoBehaviour {
 					// hit a tool
 					if (hit.collider.GetComponent<Tool> ().CanPickup ()) {
 						currentTool = hit.collider.GetComponent<Tool> ();
+
+						// set up Forced movement before you call tool.pickup()
+						// this is for the people you have to carry that slow you down
+						// get an action that tells the player when to start getting moved by the object
+						currentTool.ForcedMovement -= ToolStarted;
+						currentTool.ForcedMovement += ToolStarted;
+						// get an action to tell the player when it can go back to regular movement
+						currentTool.ToolFinishedAction -= ToolFinished;
+						currentTool.ToolFinishedAction += ToolFinished;
+
 						currentTool.PickUp (hand);
 						holdingTool = true;
 					}
 				}
 			}
 		}
+	}
+
+	public void DropTool()
+	{
+		holdingTool = false;
 	}
 }

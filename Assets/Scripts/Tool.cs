@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public enum ToolType {None, Axe, Hose, Extinguisher };
+public enum ToolType {None, Axe, Hose, Extinguisher, Victim };
 
 public class Tool : MonoBehaviour {
 
@@ -39,7 +39,7 @@ public class Tool : MonoBehaviour {
 		return canPickUp;
 	}
 
-	public void PickUp(Transform parent)
+	public virtual void PickUp(Transform parent)
 	{
 		if (canPickUp) {
 			// player uses this to pick it up
@@ -55,7 +55,7 @@ public class Tool : MonoBehaviour {
 		}
 	}
 
-	public void Drop()
+	public virtual void Drop()
 	{
 		transform.parent = null;
 		// has nobody holding it

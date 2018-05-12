@@ -55,12 +55,12 @@ public class Extinguisher : Tool {
 			Vector3 direction;
 			RaycastHit hit;
 
-			for (int i = 0; i <= sprayCone * 0.1f; i++) {
+			for (int i = 0; i <= sprayCone * 0.2f; i++) {
 
-				// every 10 degrees
+				// every 5 degrees
 				// Cos and sin use radians so convert to radians
 				// iterate from +30 degrees to -30 degrees
-				angle = (sprayCone * 0.5f - (10) * i) * Mathf.Deg2Rad;
+				angle = (sprayCone * 0.5f - (5) * i) * Mathf.Deg2Rad;
 				direction = new Vector3((transform.forward.x * Mathf.Cos(angle) - (transform.forward.z * Mathf.Sin(angle))), 0, transform.forward.x * Mathf.Sin(angle) + transform.forward.z * Mathf.Cos(angle));
 				// fire a ray every 10 degrees
 				//Ray r = new Ray(transform.position, direction);

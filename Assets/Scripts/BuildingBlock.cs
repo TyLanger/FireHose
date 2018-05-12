@@ -28,6 +28,26 @@ public class BuildingBlock : MonoBehaviour {
 	public event Action FireQuenched;
 
 
+	// fire particles
+	public ParticleSystem fireParticles;
+	ParticleSystem.EmissionModule fireEmission;
+	ParticleSystem.MainModule fireMain;
+
+	int smallEmission = 6;
+	int largeEmission = 15;
+	int smoulderEmission = 5;
+
+	// don't change lifetime
+	// change start speed
+	// slower start speed means flames dont go as high
+	float smallStartSpeed = 2;
+	float largeStartSpeed = 4;
+	float smoulderStartSpeed = 1;
+
+
+	// smoke particles
+
+
 	// doors and furniture can be destroyed by hand, but not walls (they need an axe)
 	public int hitPoints = 5;
 	// strength needed to do any damage
@@ -44,18 +64,26 @@ public class BuildingBlock : MonoBehaviour {
 		grid = _grid;
 		xPos = _xPos;
 		zPos = _zPos;
+
+		//fireParticles = GetComponentInChildren<ParticleSystem> ();
+		fireEmission = fireParticles.emission;
+		fireMain = fireParticles.main;
 	}
 
 	IEnumerator Burning()
 	{
+		// small fire particles
+		fireEmission.rateOverTime = smallEmission;
+		fireMain.startSpeed = smallStartSpeed;
+
 		while (currentFuelSeconds < growthTime) {
 			currentFuelSeconds += Time.fixedDeltaTime;
 			yield return new WaitForFixedUpdate();
 		}
 		// now a big fire
-		// temporary to see where the fire is
-		//transform.position = transform.position + new Vector3(0, 0.1f, 0);
-		transform.FindChild ("Fire").localScale *= 1.1f;
+		// adjust particles
+		fireEmission.rateOverTime = largeEmission;
+		fireMain.startSpeed = largeStartSpeed;
 
 
 		//currentFuelSeconds = 0;
@@ -66,7 +94,11 @@ public class BuildingBlock : MonoBehaviour {
 		}
 		// destroyed
 		destroyedByFire = true;
-		transform.FindChild ("Fire").localScale = Vector3.one * 0.5f;;
+
+		// smoulder particles
+		fireEmission.rateOverTime = smoulderEmission;
+		fireMain.startSpeed = smoulderStartSpeed;
+
 
 		if (DestroyedByFire != null) {
 			DestroyedByFire ();

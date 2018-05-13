@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	// setting up multiple players
 	// ending the game when a win/loss condition is met
 
+	public CameraController cameraController;
 	public Player player;
 
 	Player player1;
@@ -74,6 +75,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+		cameraController.FocusOn (AveragePlayerLocation ());
 	}
 
 	void SpawnPlayers()
@@ -91,5 +93,34 @@ public class GameManager : MonoBehaviour {
 		player4 = Instantiate (player, p4Spawn, Quaternion.identity);
 		player4.GetComponent<Renderer> ().material.color = Color.yellow;
 
+	}
+
+	Vector3 AveragePlayerLocation()
+	{
+		Vector3 average = Vector3.zero;
+		if (numPlayers > 0) {
+			
+			if (p1Joined) {
+				average += player1.transform.position;
+			}
+			if (p2Joined) {
+				average += player2.transform.position;
+			}
+			if (p3Joined) {
+				average += player3.transform.position;
+			}
+			if (p4Joined) {
+				average += player4.transform.position;
+			}
+
+			average = average / numPlayers;
+		} else {
+			average += player1.transform.position;
+			average += player2.transform.position;
+			average += player3.transform.position;
+			average += player4.transform.position;
+			average = average / 4;
+		}
+		return average;
 	}
 }

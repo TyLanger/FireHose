@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class House : MonoBehaviour {
 
@@ -19,13 +20,9 @@ public class House : MonoBehaviour {
 
 	public int numFiresStarted = 0;
 	public int numFiresPutOut = 0;
+	public int numBlocksDestroyedByFire = 0;
 
-	void Update()
-	{
-		if (Input.GetButtonDown ("Jump")) {
-			CreateNewHouse ();
-		}
-	}
+	public event Action<int, int, int> AllFiresPutOut;
 
 	void Initialize()
 	{
@@ -54,7 +51,7 @@ public class House : MonoBehaviour {
 
 				// set up actions
 				copy.GetComponentInChildren<BuildingBlock>().SetAlight += NewFireStarted;
-				//copy.GetComponent<BuildingBlock>().DestroyedByFire += NewFireStarted;
+				copy.GetComponentInChildren<BuildingBlock> ().DestroyedByFire += BlockDestroyedByFire;
 				copy.GetComponentInChildren<BuildingBlock>().FireQuenched += FirePutOut;
 
 			}
@@ -107,8 +104,8 @@ public class House : MonoBehaviour {
 
 	void StartFire()
 	{
-		int x = Random.Range (0, xSize);
-		int z = Random.Range (0, zSize);
+		int x = UnityEngine.Random.Range (0, xSize);
+		int z = UnityEngine.Random.Range (0, zSize);
 		Debug.Log ("Starting fire at " + x + ", " + z);
 		groundFloor [x,z].GetComponentInChildren<BuildingBlock> ().Burn (100);
 		//groundFloor[x,z].GetC
@@ -122,6 +119,17 @@ public class House : MonoBehaviour {
 	void FirePutOut()
 	{
 		numFiresPutOut++;
+		if ((numFiresPutOut + numBlocksDestroyedByFire) == numFiresStarted) {
+			// all fires put out
+			if (AllFiresPutOut != null) {
+				AllFiresPutOut (numFiresStarted, numFiresPutOut, numBlocksDestroyedByFire);
+			}
+		}
+	}
+
+	void BlockDestroyedByFire()
+	{
+		numBlocksDestroyedByFire++;
 	}
 
 	void BlockDestroyed()

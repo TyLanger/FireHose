@@ -29,16 +29,31 @@ public class GameManager : MonoBehaviour {
 
 	int numPlayers = 0;
 
+	public House house;
+
+
 	// Use this for initialization
 	void Start () {
 		SpawnPlayers ();
+		house.AllFiresPutOut += AllFiresPutOut;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+		if (Input.GetButtonDown ("Jump")) {
+			house.CreateNewHouse ();
+		}
+
+
 		// Joysticks are in the order they were plugged in
 		if (!p1Joined) {
+			if (Input.GetButtonDown ("Fire1")) {
+				Debug.Log ("Keyboard as P1");
+				p1Joined = true;
+				numPlayers++;
+				player1.Setup("Horizontal", "Vertical", "Fire1", "Fire2");
+			}
 			if (Input.GetButtonDown ("Pickup_P1")) {
 				Debug.Log ("Player 1 joined");
 				p1Joined = true;
@@ -122,5 +137,10 @@ public class GameManager : MonoBehaviour {
 			average = average / 4;
 		}
 		return average;
+	}
+
+	void AllFiresPutOut(int firesStarted, int firesPutOut, int blocksDestroyedByFire)
+	{
+		Debug.Log ("You won! Total fires: "+firesStarted+", put out: "+firesPutOut+", blocks destroyed: "+blocksDestroyedByFire);
 	}
 }

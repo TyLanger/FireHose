@@ -28,6 +28,7 @@ public class Player : MonoBehaviour {
 	string verticalInput = "Vertical";
 	string pickupInput = "Fire1";
 	string useInput = "Fire2";
+	public bool canMove = false;
 
 	// Use this for initialization
 	void Start () {
@@ -37,33 +38,34 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown (pickupInput)) {
-			// left click
-			// A button on snes controller
-			//Debug.Log ("Fire1");
-			PickUp();
-		}
-		if (Input.GetButtonDown (useInput)) {
-			// right click
-			// B button on snes controller
-			//Debug.Log ("Fire2");
-			UseTool();
-		}
-		if (Input.GetButtonUp (useInput)) {
-			// right click
-			// B button on snes controller
-			//Debug.Log ("Fire2");
-			StopTool();
-		}
+		if (canMove) {
+			if (Input.GetButtonDown (pickupInput)) {
+				// left click
+				// A button on snes controller
+				//Debug.Log ("Fire1");
+				PickUp ();
+			}
+			if (Input.GetButtonDown (useInput)) {
+				// right click
+				// B button on snes controller
+				//Debug.Log ("Fire2");
+				UseTool ();
+			}
+			if (Input.GetButtonUp (useInput)) {
+				// right click
+				// B button on snes controller
+				//Debug.Log ("Fire2");
+				StopTool ();
+			}
 
-		// wasd
-		// left stick for snes controller
-		moveInput = new Vector3(Input.GetAxisRaw(horizontalInput), 0, Input.GetAxisRaw(verticalInput));
-		if (moveInput.sqrMagnitude != 0) {
-			// set lookDirection only if input is not 0
-			lookDirection = moveInput;
+			// wasd
+			// left stick for snes controller
+			moveInput = new Vector3 (Input.GetAxisRaw (horizontalInput), 0, Input.GetAxisRaw (verticalInput));
+			if (moveInput.sqrMagnitude != 0) {
+				// set lookDirection only if input is not 0
+				lookDirection = moveInput;
+			}
 		}
-
 	}
 
 	void FixedUpdate () {
@@ -111,6 +113,7 @@ public class Player : MonoBehaviour {
 		verticalInput = vertName;
 		pickupInput = pickupName;
 		useInput = useName;
+		canMove = true;
 	}
 
 	void StopTool()

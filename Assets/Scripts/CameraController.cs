@@ -7,7 +7,10 @@ public class CameraController : MonoBehaviour {
 	Vector3 focusPoint;
 	Vector3 groundOffset;
 
-	Vector3 velocity = Vector3.zero;
+	float baseMoveSpeed = 1;
+	float currentMoveSpeed;
+
+	//Vector3 velocity = Vector3.zero;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +25,7 @@ public class CameraController : MonoBehaviour {
 			}
 		}
 
+		currentMoveSpeed = baseMoveSpeed;
 		focusPoint = transform.position;
 	}
 	
@@ -36,7 +40,7 @@ public class CameraController : MonoBehaviour {
 		// moves the first chunk faster than subsequent chunks
 		// lurch and slide
 		// moves 10% of the distance, then 10% of the remaining distance, then 10% of the.....
-		transform.position = Vector3.Lerp (transform.position, focusPoint, Time.deltaTime);
+		transform.position = Vector3.Lerp (transform.position, focusPoint, Time.deltaTime * currentMoveSpeed);
 
 		if (Input.GetButtonDown ("Jump")) {
 
@@ -50,19 +54,23 @@ public class CameraController : MonoBehaviour {
 				RaycastHit hit;
 				if (Physics.Raycast (camera.transform.position, worldSpaceCorner, out hit)) {
 					if (hit.collider != null) {
-						Debug.Log (hit.point);
+						//Debug.Log (hit.point);
 					}
 				}
 			}
-			FocusOn(new Vector3(12, 0, 6));
-
 		}
 	}
 
 	/// A point in the world for the camera to focus on
 	public void FocusOn(Vector3 focalPoint)
 	{
-		// this doesn't work if it is called every frame
+		FocusOn (focalPoint, baseMoveSpeed);
+	}
+
+	/// A point in the world for the camera to focus on
+	public void FocusOn(Vector3 focalPoint, float speed)
+	{
+		currentMoveSpeed = speed;
 		focusPoint = focalPoint + groundOffset;
 	}
 }

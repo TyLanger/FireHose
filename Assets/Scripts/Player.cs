@@ -175,8 +175,8 @@ public class Player : MonoBehaviour {
 		} else {
 			// pick up object in front of you
 			RaycastHit hit;
-			if (Physics.Raycast (transform.position, transform.forward, out hit, 2)) {
-				//Debug.Log ("Hit something");
+			if (Physics.Raycast (transform.position, transform.forward, out hit, 2, LayerMask.GetMask("Tool"))) {
+				Debug.Log ("Hit something");
 				if (hit.collider.GetComponentInChildren<Tool> () != null) {
 					// hit a tool
 					if (hit.collider.GetComponentInChildren<Tool> ().CanPickup ()) {

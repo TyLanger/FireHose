@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 		SpawnPlayers ();
 		house.AllFiresPutOut += AllFiresPutOut;
+		house.AllVictimsRescued += AllVictimsRescued;
+
 	}
 	
 	// Update is called once per frame
@@ -142,5 +144,10 @@ public class GameManager : MonoBehaviour {
 	void AllFiresPutOut(int firesStarted, int firesPutOut, int blocksDestroyedByFire)
 	{
 		Debug.Log ("You won! Total fires: "+firesStarted+", put out: "+firesPutOut+", blocks destroyed: "+blocksDestroyedByFire);
+	}
+
+	void AllVictimsRescued()
+	{
+		Debug.Log ("All victims rescued");
 	}
 }

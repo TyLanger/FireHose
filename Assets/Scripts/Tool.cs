@@ -108,11 +108,15 @@ public class Tool : MonoBehaviour {
 		// script is attached to the visuals
 		// Move physics object to where visuals currently are
 		// change visuals back to being child of physics object
-
+		// Need to set active first for the Victim object
+		// it uses an IEnumerator to calculate its position to tell if it's rescued
+		// attaching it to an inactive object (the rigidbody object) stops the coroutine from running
+		// If this breaks other stuff, Victim could use FixedUpdate or maybe start the coroutine in Awake?
+		physicsObject.SetActive (true);
 		physicsObject.transform.position = transform.position;
 		physicsObject.transform.rotation = transform.rotation;
 		transform.parent = physicsObject.transform;
-		physicsObject.SetActive (true);
+
 
 
 

@@ -6,6 +6,35 @@ public class Victim : Tool {
 
 
 	public float throwForce = 100;
+	// what position in the z direction the victim needs to be below to be considered saved
+	float rescueLine = 0;
+
+	public event System.Action Rescued;
+
+	protected override void  Start()
+	{
+		base.Start();
+		StartCoroutine (RescueCheck ());
+	}
+
+	IEnumerator RescueCheck()
+	{
+		while (true) {
+			// check if you're rescued
+			if (isRescued ()) {
+				Debug.Log ("Victim Rescued");
+				if (Rescued != null) {
+					Rescued ();
+				}
+				break;
+			}
+
+			// only need to check every 1 second
+			// could lower this if it's an issue
+			// running this more often will probably not affect performance at all. Would need >100 victims probably
+			yield return new WaitForSeconds (1);
+		}
+	}
 
 	public override void PickUp(Transform parent)
 	{
@@ -44,5 +73,10 @@ public class Victim : Tool {
 		}
 
 		yield return new WaitForFixedUpdate();
+	}
+
+	public bool isRescued()
+	{
+		return (transform.position.z < rescueLine);
 	}
 }

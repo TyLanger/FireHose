@@ -14,6 +14,7 @@ public class House : MonoBehaviour {
 	public GameObject Wall;
 	public GameObject Floor;
 	public GameObject Door;
+	public GameObject Victim;
 
 	GameObject[,] groundFloor;
 	GameObject BlockParent;
@@ -23,6 +24,10 @@ public class House : MonoBehaviour {
 	public int numBlocksDestroyedByFire = 0;
 
 	public event Action<int, int, int> AllFiresPutOut;
+	public event Action AllVictimsRescued;
+
+	int numVictims = 3;
+	int numVictimsRescued = 0;
 
 	void Initialize()
 	{
@@ -68,7 +73,7 @@ public class House : MonoBehaviour {
 
 		BuildHouse (transform.position, BlockParent.transform);
 		//RotateWalls ();
-
+		PlaceRandomVictims();
 
 		StartFire ();
 	}
@@ -111,6 +116,30 @@ public class House : MonoBehaviour {
 		//groundFloor[x,z].GetC
 	}
 
+	void PlaceRandomVictims()
+	{
+		for (int i = 0; i < numVictims; i++) {
+			int x = UnityEngine.Random.Range (0, xSize);
+			int z = UnityEngine.Random.Range (0, zSize);
+
+			if (groundFloor [x, z].GetComponentInChildren<BuildingBlock> ().blockType == BlockType.Floor) {
+				// only spawn victims on the floor
+
+				var copy = Instantiate (Victim, transform.position + new Vector3 (x * gridSpacing, 1, z * gridSpacing), transform.rotation);
+				Victim v = copy.GetComponentInChildren<Victim> ();
+				if (v != null) {
+					// subscribe to an action to know when the victim is safe
+					v.Rescued += VictimRescued;
+				}
+			} else {
+				// tried to spawn in a wall
+				// try again
+				i--;
+			}
+
+		}
+	}
+
 	void NewFireStarted()
 	{
 		numFiresStarted++;
@@ -123,6 +152,17 @@ public class House : MonoBehaviour {
 			// all fires put out
 			if (AllFiresPutOut != null) {
 				AllFiresPutOut (numFiresStarted, numFiresPutOut, numBlocksDestroyedByFire);
+			}
+		}
+	}
+
+	void VictimRescued()
+	{
+		numVictimsRescued++;
+		if (numVictimsRescued == numVictims) {
+
+			if (AllVictimsRescued != null) {
+				AllVictimsRescued ();
 			}
 		}
 	}

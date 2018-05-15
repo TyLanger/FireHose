@@ -67,7 +67,12 @@ public class Extinguisher : Tool {
 				Debug.DrawLine(transform.position, transform.position + direction * sprayDistance, Color.blue);
 				if (Physics.Raycast (transform.position, direction, out hit, sprayDistance)) {
 					if (hit.collider.tag == "Fire") {
-						hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
+						if (hit.collider.GetComponentInParent<BuildingBlock> () != null) {
+							hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
+						} else if (hit.collider.GetComponentInParent<Player> () != null) {
+							hit.collider.GetComponentInParent<Player> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);
+
+						}
 					}
 				}
 			}
@@ -134,8 +139,9 @@ public class Extinguisher : Tool {
 
 	public override void Drop ()
 	{
-		ToolFinished ();
+		
 		base.Drop ();
+		ToolFinished ();
 	}
 
 	public override float GetSpeedMultiplier()

@@ -46,8 +46,9 @@ public class Victim : Tool {
 	public override void Drop()
 	{
 		// tell the player the tool is done influencing their movement
-		ToolFinished ();
+
 		base.Drop ();
+		ToolFinished ();
 	}
 
 	public override void Use()

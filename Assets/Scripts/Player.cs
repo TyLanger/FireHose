@@ -30,6 +30,17 @@ public class Player : MonoBehaviour {
 	string useInput = "Fire2";
 	public bool canMove = false;
 
+	public GameObject fire;
+	bool onFire = false;
+	bool stopDropAndRoll = false;
+	float rollMoveMultiplier = 0.8f;
+	Vector3 rollStartPos;
+	float distanceOfRoll = 3f;
+	int numRollsToDouse = 2;
+	int numRollsMade = 0;
+
+	float fireHp = 20;
+
 	// Use this for initialization
 	void Start () {
 		currentUsing = ToolType.None;
@@ -57,6 +68,10 @@ public class Player : MonoBehaviour {
 				//Debug.Log ("Fire2");
 				StopTool ();
 			}
+			if (Input.GetButtonDown ("Fire3")) {
+				// testing. Force yourself to start on fire
+				StartOnFire ();
+			}
 
 			// wasd
 			// left stick for snes controller
@@ -72,13 +87,40 @@ public class Player : MonoBehaviour {
 		switch(currentUsing)
 		{
 		case ToolType.None:
-			// transform.forward*moveInput.magnitude makes the player have to do circles to turn around
-			// they always move forward and rely on turn speed to be able to turn. Multiplying by moveInput.magnitude makes it so the player doesn't move when not pressing anything
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + moveInput, moveSpeed * Time.fixedDeltaTime);
-			// use lastMove input so it is never 0
-			// lookDirection is the last "actual" input, no 0 when not pressing movement buttons
-			// makes character facec where they are moving
-			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, turnSpeed * Time.fixedDeltaTime, 1);
+			if (stopDropAndRoll) {
+				// Stop Drop and Roll movement
+
+				// only get horizontal input
+				// this could be changed later to be able to roll up and down or on a diagonal instead of only left tot right
+				transform.position = Vector3.MoveTowards (transform.position, transform.position + new Vector3 (moveInput.x, 0, 0), rollMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+				if(onFire)
+				{
+					if (Mathf.Abs (transform.position.x - rollStartPos.x) > distanceOfRoll) {
+						// if the difference between the current pos and start pos is greater than the distance of a roll, made a succesful roll
+						// made a roll
+						// Problem: once you hit the roll threshold, you can stay in that position and after the right number of updates, you will be put out
+						// Solution: set a new starting pos after every roll.
+						// Minor: this means you can just roll in one direction, you don't have to roll back and forth
+						// If you lay down in a position where you can't roll distanceOfRoll in either direction, you can't put yourself out
+						rollStartPos = transform.position;
+						numRollsMade++;
+						Debug.Log ("Roll made");
+						if (numRollsMade == numRollsToDouse) {
+							FirePutOut ();
+						}
+					}
+				}
+			} else {
+				// Normal Movement
+
+				// transform.forward*moveInput.magnitude makes the player have to do circles to turn around
+				// they always move forward and rely on turn speed to be able to turn. Multiplying by moveInput.magnitude makes it so the player doesn't move when not pressing anything
+				transform.position = Vector3.MoveTowards (transform.position, transform.position + moveInput, moveSpeed * Time.fixedDeltaTime);
+				// use lastMove input so it is never 0
+				// lookDirection is the last "actual" input, no 0 when not pressing movement buttons
+				// makes character face where they are moving and stay facing that direction when no movement
+				transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, turnSpeed * Time.fixedDeltaTime, 1);
+			}
 			break;
 		case ToolType.Axe:
 			transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
@@ -131,22 +173,32 @@ public class Player : MonoBehaviour {
 			currentTool.Use ();
 		} else {
 			// figure out what task to attempt
-
-			// break down door
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, transform.forward, out hit, 3)) {
-				if (hit.collider.GetComponent<BuildingBlock> () != null) {
-					if (hit.collider.GetComponent<BuildingBlock> ().blockType == BlockType.Door) {
-						// hit a door
-						// try to break it down
-						hit.collider.GetComponent<BuildingBlock> ().Break (unarmedBreakStrength);
+			if (onFire && !stopDropAndRoll) {
+				// go into stop drop and roll mode
+				stopDropAndRoll = true;
+				numRollsMade = 0;
+				rollStartPos = transform.position;
+			} else if (!onFire && stopDropAndRoll) {
+				// you have now put yourself out, but are still rolling on the ground
+				// press use again to stand up
+				stopDropAndRoll = false;
+			} else {
+				// break down door
+				RaycastHit hit;
+				if (Physics.Raycast (transform.position, transform.forward, out hit, 3)) {
+					if (hit.collider.GetComponent<BuildingBlock> () != null) {
+						if (hit.collider.GetComponent<BuildingBlock> ().blockType == BlockType.Door) {
+							// hit a door
+							// try to break it down
+							hit.collider.GetComponent<BuildingBlock> ().Break (unarmedBreakStrength);
+						}
+					} else if (hit.collider.tag == "Fire") {
+						// stomp out fire
+						hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (unarmedDouseStrength * Time.fixedDeltaTime);
 					}
-				} else if (hit.collider.tag == "Fire") {
-					hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (unarmedDouseStrength * Time.fixedDeltaTime);
 				}
 			}
 
-			// stomp out fire
 		}
 	}
 
@@ -158,41 +210,53 @@ public class Player : MonoBehaviour {
 	void ToolFinished()
 	{
 		currentUsing = ToolType.None;
+		if (onFire) {
+			// the axe doesn't let the player drop it in the middle of its animation
+			// being on fire makes you drop your tool
+			// so this is here to get the axe to drop itself when it's done if you were set on fire during the axe use
+			PickUp ();
+		}
 	}
 
 	void PickUp()
 	{
+		// Drop current thing
 		if (holdingTool) {
 			// drop object
 			if (currentTool != null) {
 				if (currentTool.CanDrop ()) {
 					// check if the tool lets you drop it at this moment
 					// can't drop an axe while swinging
-					currentTool.Drop ();
 					DropTool ();
+					//currentTool.Drop ();
+
 				}
 			}
+		// Pick up new thing
 		} else {
-			// pick up object in front of you
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, transform.forward, out hit, 2, LayerMask.GetMask("Tool"))) {
-				Debug.Log ("Hit something");
-				if (hit.collider.GetComponentInChildren<Tool> () != null) {
-					// hit a tool
-					if (hit.collider.GetComponentInChildren<Tool> ().CanPickup ()) {
-						currentTool = hit.collider.GetComponentInChildren<Tool> ();
+			// cannot pick up anything while on fire or rolling on the ground trying to put out the fire
+			if (!onFire && !stopDropAndRoll) {
+				// pick up object in front of you
+				RaycastHit hit;
+				if (Physics.Raycast (transform.position, transform.forward, out hit, 2, LayerMask.GetMask ("Tool"))) {
+					Debug.Log ("Hit something");
+					if (hit.collider.GetComponentInChildren<Tool> () != null) {
+						// hit a tool
+						if (hit.collider.GetComponentInChildren<Tool> ().CanPickup ()) {
+							currentTool = hit.collider.GetComponentInChildren<Tool> ();
 
-						// set up Forced movement before you call tool.pickup()
-						// this is for the people you have to carry that slow you down
-						// get an action that tells the player when to start getting moved by the object
-						currentTool.ForcedMovement -= ToolStarted;
-						currentTool.ForcedMovement += ToolStarted;
-						// get an action to tell the player when it can go back to regular movement
-						currentTool.ToolFinishedAction -= ToolFinished;
-						currentTool.ToolFinishedAction += ToolFinished;
+							// set up Forced movement before you call tool.pickup()
+							// this is for the people you have to carry that slow you down
+							// get an action that tells the player when to start getting moved by the object
+							currentTool.ForcedMovement -= ToolStarted;
+							currentTool.ForcedMovement += ToolStarted;
+							// get an action to tell the player when it can go back to regular movement
+							currentTool.ToolFinishedAction -= ToolFinished;
+							currentTool.ToolFinishedAction += ToolFinished;
 
-						currentTool.PickUp (hand);
-						holdingTool = true;
+							currentTool.PickUp (hand);
+							holdingTool = true;
+						}
 					}
 				}
 			}
@@ -201,6 +265,44 @@ public class Player : MonoBehaviour {
 
 	public void DropTool()
 	{
+		// thell the tool you are dropping it
+		// it may call ToolFinished
+		// the victim does to tell the player it can move normally again
+		currentTool.Drop ();
+		// then unsubscribe from the actions
+		// else another player can pick up that tool and force you to move
+		currentTool.ForcedMovement -= ToolStarted;
+		currentTool.ToolFinishedAction -= ToolFinished;
 		holdingTool = false;
+	}
+
+	public void PutOutFire(float dousePower)
+	{
+		if (onFire) {
+			fireHp -= dousePower;
+			if (fireHp < 0) {
+				FirePutOut();
+			}
+		}
+	}
+
+	void FirePutOut()
+	{
+		if (onFire) {
+			onFire = false;
+			fire.SetActive (false);
+		}
+	}
+
+	void StartOnFire()
+	{
+		// You are now on fire
+		// can you still use tools?
+		// probably not. Would like to force drop them, but that may mess up the axe.
+		onFire = true;
+		fire.SetActive(true);
+		// if holding something, drop it. If it's the axe, you can't drop it
+		PickUp ();
+
 	}
 }

@@ -50,12 +50,7 @@ public class GameManager : MonoBehaviour {
 
 		// Joysticks are in the order they were plugged in
 		if (!p1Joined) {
-			if (Input.GetButtonDown ("Fire1")) {
-				Debug.Log ("Keyboard as P1");
-				p1Joined = true;
-				numPlayers++;
-				player1.Setup("Horizontal", "Vertical", "Fire1", "Fire2");
-			}
+			
 			if (Input.GetButtonDown ("Pickup_P1")) {
 				Debug.Log ("Player 1 joined");
 				p1Joined = true;
@@ -83,6 +78,12 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		if (!p4Joined) {
+			if (Input.GetButtonDown ("Fire1")) {
+				Debug.Log ("Keyboard as P4");
+				p4Joined = true;
+				numPlayers++;
+				player4.Setup("Horizontal", "Vertical", "Fire1", "Fire2");
+			}
 			if (Input.GetButtonDown ("Pickup_P4")) {
 				Debug.Log ("Player 4 joined");
 				p4Joined = true;

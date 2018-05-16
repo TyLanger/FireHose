@@ -210,7 +210,7 @@ public class Player : MonoBehaviour {
 	void ToolFinished()
 	{
 		currentUsing = ToolType.None;
-		if (onFire) {
+		if (onFire && holdingTool) {
 			// the axe doesn't let the player drop it in the middle of its animation
 			// being on fire makes you drop your tool
 			// so this is here to get the axe to drop itself when it's done if you were set on fire during the axe use
@@ -239,7 +239,7 @@ public class Player : MonoBehaviour {
 				// pick up object in front of you
 				RaycastHit hit;
 				if (Physics.Raycast (transform.position, transform.forward, out hit, 2, LayerMask.GetMask ("Tool"))) {
-					Debug.Log ("Hit something");
+					//Debug.Log ("Hit something");
 					if (hit.collider.GetComponentInChildren<Tool> () != null) {
 						// hit a tool
 						if (hit.collider.GetComponentInChildren<Tool> ().CanPickup ()) {
@@ -265,7 +265,8 @@ public class Player : MonoBehaviour {
 
 	public void DropTool()
 	{
-		// thell the tool you are dropping it
+		holdingTool = false;
+		// tell the tool you are dropping it
 		// it may call ToolFinished
 		// the victim does to tell the player it can move normally again
 		currentTool.Drop ();
@@ -273,7 +274,7 @@ public class Player : MonoBehaviour {
 		// else another player can pick up that tool and force you to move
 		currentTool.ForcedMovement -= ToolStarted;
 		currentTool.ToolFinishedAction -= ToolFinished;
-		holdingTool = false;
+
 	}
 
 	public void PutOutFire(float dousePower)
@@ -296,13 +297,22 @@ public class Player : MonoBehaviour {
 
 	void StartOnFire()
 	{
-		// You are now on fire
-		// can you still use tools?
-		// probably not. Would like to force drop them, but that may mess up the axe.
-		onFire = true;
-		fire.SetActive(true);
-		// if holding something, drop it. If it's the axe, you can't drop it
-		PickUp ();
+		if (!onFire) {
+			// You are now on fire
+			// can you still use tools?
+			// probably not. Would like to force drop them, but that may mess up the axe.
+			onFire = true;
+			fire.SetActive (true);
+			// if holding something, drop it. If it's the axe, you can't drop it
+			PickUp ();
+		}
 
+	}
+
+	void OnTriggerEnter(Collider col)
+	{
+		if (col.tag == "Fire") {
+			StartOnFire ();
+		}
 	}
 }

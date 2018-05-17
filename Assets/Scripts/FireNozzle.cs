@@ -15,6 +15,54 @@ public class FireNozzle : Extinguisher {
 
 	public float weightSpeedMultiplier = 0.7f;
 
+	Vector3 anchorPoint;
+	float maxHoseLength;
+	float currentHoseLength = 10;
+	bool moving = false;
+	bool canSee = false;
+	Transform carrierTrans;
+	public Transform hitTrans;
+
+	public Hose hose;
+
+	protected override void Start()
+	{
+		base.Start ();
+		anchorPoint = transform.position;
+	}
+
+	IEnumerator CheckHose()
+	{
+		RaycastHit hit;
+		while (moving) {
+			// hose runs from where it is attached to the truck
+			// fire a ray from the start to the player holding the nozzle
+			// if the ray doesn't hit, that means there's something in the way
+			// ignore other players, fire, other tools
+			// create a hose bend at the last point the nozzle was
+			// do the raycast from this new point
+			// subtract the length from the available hoseLength
+
+			// how do I ignore everything but this object?
+			// is raycasting backwards easier (from tool to anchor)
+
+			// raycast ignores the object casting it...
+			// That's the object I want to hit...
+
+			Debug.DrawRay (anchorPoint, (transform.position - anchorPoint), Color.blue);
+			if (Physics.Raycast (anchorPoint, (transform.position - anchorPoint), out hit)) {
+				hitTrans = hit.transform;
+				if (hit.transform == transform.parent.parent) {
+					canSee = true;
+				} else {
+					canSee = false;
+				}
+			}
+
+			yield return new WaitForFixedUpdate ();
+		}
+	}
+
 	public override Vector3 MoveTowards (Vector3 current, Vector3 forward, Vector3 input, float baseSpeed)
 	{
 		// movement is a blend of the push from the extinguisher and the slow movement of carrying the victim
@@ -30,26 +78,21 @@ public class FireNozzle : Extinguisher {
 		}
 	}
 
-	/*
 	public override void PickUp (Transform parent)
 	{
 		base.PickUp (parent);
-		ForcedMovementStarted ();
+		moving = true;
+		hose.SetTarget (parent.parent);
+		hose.StartMoving ();
+		//StartCoroutine (CheckHose ());
+		//Debug.Log ("Started coroutine");
 	}
 
 	public override void Drop ()
 	{
 		base.Drop ();
-		ToolFinished ();
+		moving = false;
+		// setting moving to false will stop the CheckHose coroutine
+		hose.StopMoving();
 	}
-
-	public override void StopUse ()
-	{
-		if (spraying) {
-			spraying = false;
-			StopCoroutine ("Spray");
-			particles.Stop ();
-		}
-	}
-	*/
 }

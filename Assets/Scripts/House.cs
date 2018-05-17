@@ -24,11 +24,12 @@ public class House : MonoBehaviour {
 	public int numFiresStarted = 0;
 	public int numFiresPutOut = 0;
 	public int numBlocksDestroyedByFire = 0;
-	public float maxDestructionPercent = 0.75f;
+	float maxDestructionPercent = 0.75f;
 	bool gameLost = false;
 
 	public event Action<int, int, int> AllFiresPutOut;
 	public event Action AllVictimsRescued;
+	public event Action<int, int> HouseDestroyedByFire;
 
 	int numVictims = 3;
 	int numVictimsRescued = 0;
@@ -67,9 +68,11 @@ public class House : MonoBehaviour {
 		}
 	}
 
-	public void CreateNewHouse()
+	public void CreateNewHouse(float maxDestroyPercent)
 	{
-		
+		// if this percent of blocks destroyed by fire is reached, the house is considered destroyed by fire
+		maxDestructionPercent = maxDestroyPercent;
+
 		Initialize ();
 		SetRooms ();
 		SetOuterWalls ();
@@ -218,6 +221,9 @@ public class House : MonoBehaviour {
 		if (numBlocksDestroyedByFire > (xSize * zSize) * maxDestructionPercent && !gameLost) {
 			gameLost = true;
 			Debug.Log("You lose. "+numBlocksDestroyedByFire + " blocks destroyed by fire");
+			if (HouseDestroyedByFire != null) {
+				HouseDestroyedByFire (numBlocksDestroyedByFire, xSize*zSize);
+			}
 		}
 	}
 

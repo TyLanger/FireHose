@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour {
 	int numPlayers = 0;
 
 	public House house;
+	[Range(0, 1)]
+	public float maxDestructionPercent = 0.5f;
 
 	bool allFiresOut = false;
 	bool allRescued = false;
@@ -39,6 +41,8 @@ public class GameManager : MonoBehaviour {
 		SpawnPlayers ();
 		house.AllFiresPutOut += AllFiresPutOut;
 		house.AllVictimsRescued += AllVictimsRescued;
+		house.HouseDestroyedByFire += HouseDestroyedByFire;
+
 
 	}
 	
@@ -46,7 +50,7 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 
 		if (Input.GetButtonDown ("Jump")) {
-			house.CreateNewHouse ();
+			house.CreateNewHouse (maxDestructionPercent);
 		}
 
 
@@ -165,5 +169,11 @@ public class GameManager : MonoBehaviour {
 	void GameWon()
 	{
 		Debug.Log ("Game Won");
+	}
+
+	void HouseDestroyedByFire(int blocksDestroyed, int totalBlocks)
+	{
+		Debug.Log ("Game Lost");
+
 	}
 }

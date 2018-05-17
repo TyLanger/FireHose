@@ -23,7 +23,7 @@ public class Extinguisher : Tool {
 
 	public float douseStrength = 30;
 
-	bool spraying = false;
+	protected bool spraying = false;
 
 	public ParticleSystem particles;
 
@@ -139,8 +139,11 @@ public class Extinguisher : Tool {
 
 	public override void Drop ()
 	{
-		
 		base.Drop ();
+		// check here too so I don't start the recharge coroutine twice
+		if (spraying) {
+			StopUse ();
+		}
 		ToolFinished ();
 	}
 

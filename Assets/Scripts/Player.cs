@@ -129,7 +129,7 @@ public class Player : MonoBehaviour {
 			break;
 		case ToolType.Hose:
 			// move away from the water coming out of the hose
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+			transform.position = currentTool.MoveTowards (transform.position, transform.forward, moveInput, moveSpeed * Time.fixedDeltaTime);
 			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
 			break;
 		case ToolType.Extinguisher:

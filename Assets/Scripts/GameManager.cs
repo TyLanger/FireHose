@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour {
 
 	public House house;
 
+	bool allFiresOut = false;
+	bool allRescued = false;
 
 	// Use this for initialization
 	void Start () {
@@ -144,11 +146,24 @@ public class GameManager : MonoBehaviour {
 
 	void AllFiresPutOut(int firesStarted, int firesPutOut, int blocksDestroyedByFire)
 	{
-		Debug.Log ("You won! Total fires: "+firesStarted+", put out: "+firesPutOut+", blocks destroyed: "+blocksDestroyedByFire);
+		Debug.Log ("All fires out. Total fires: "+firesStarted+", put out: "+firesPutOut+", blocks destroyed: "+blocksDestroyedByFire);
+		allFiresOut = true;
+		if (allFiresOut && allRescued) {
+			GameWon ();
+		}
 	}
 
 	void AllVictimsRescued()
 	{
 		Debug.Log ("All victims rescued");
+		allRescued = true;
+		if (allFiresOut && allRescued) {
+			GameWon ();
+		}
+	}
+
+	void GameWon()
+	{
+		Debug.Log ("Game Won");
 	}
 }

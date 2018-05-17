@@ -11,6 +11,8 @@ public class House : MonoBehaviour {
 
 	//public enum BuildingBlock { Floor, Wall, Door};
 
+	int numRoomsPerSide = 3;
+
 	public GameObject Wall;
 	public GameObject Floor;
 	public GameObject Door;
@@ -22,6 +24,8 @@ public class House : MonoBehaviour {
 	public int numFiresStarted = 0;
 	public int numFiresPutOut = 0;
 	public int numBlocksDestroyedByFire = 0;
+	public float maxDestructionPercent = 0.75f;
+	bool gameLost = false;
 
 	public event Action<int, int, int> AllFiresPutOut;
 	public event Action AllVictimsRescued;
@@ -67,9 +71,9 @@ public class House : MonoBehaviour {
 	{
 		
 		Initialize ();
+		SetRooms ();
 		SetOuterWalls ();
-
-		PlaceDoors ();
+		SetDoors ();
 
 		BuildHouse (transform.position, BlockParent.transform);
 		//RotateWalls ();
@@ -90,9 +94,50 @@ public class House : MonoBehaviour {
 		}
 	}
 
-	void PlaceDoors()
+	/// Set the front door
+	void SetDoors()
 	{
 		groundFloor [xSize / 2, 0] = Door;
+	}
+
+	/// Set up interior rooms
+	void SetRooms()
+	{
+		int roomDepth = zSize / numRoomsPerSide;
+		// build x rooms
+		for (int i = 0; i < numRoomsPerSide; i++) {
+			// half of the rooms on the left side of the house
+			// half on the right side
+
+			// place interior walls
+			// simple design of equal sized rooms mirrored on either side
+			for (int x = 0; x < xSize; x++) {
+				groundFloor [x, roomDepth * i] = Wall;
+			}
+		}
+
+		int hallWidth = 5;
+		// left side of the hall
+		int hallXPos = (xSize / 2) - (hallWidth / 2);
+		// place hallway in the middle
+		for (int w = 0; w < hallWidth; w++) {
+			for (int z = 0; z < zSize; z++) {
+				if (w == 0 || w == hallWidth - 1) {
+					groundFloor [hallXPos + w, z] = Wall;
+				} else {
+					groundFloor [hallXPos + w, z] = Floor;
+				}
+			}
+		}
+
+
+		// place doors
+		for (int i = 0; i < numRoomsPerSide; i++) {
+			// one door on the left room, one door on the right room
+			groundFloor [hallXPos, roomDepth * i + (roomDepth/2)] = Door;
+			groundFloor [hallXPos + hallWidth-1, roomDepth * i + (roomDepth/2)] = Door;
+
+		}
 	}
 
 	/// Rotate walls to the correct orientation
@@ -170,6 +215,10 @@ public class House : MonoBehaviour {
 	void BlockDestroyedByFire()
 	{
 		numBlocksDestroyedByFire++;
+		if (numBlocksDestroyedByFire > (xSize * zSize) * maxDestructionPercent && !gameLost) {
+			gameLost = true;
+			Debug.Log("You lose. "+numBlocksDestroyedByFire + " blocks destroyed by fire");
+		}
 	}
 
 	void BlockDestroyed()

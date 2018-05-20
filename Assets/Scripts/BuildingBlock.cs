@@ -27,6 +27,9 @@ public class BuildingBlock : MonoBehaviour {
 	public event Action DestroyedByFire;
 	public event Action FireQuenched;
 
+	public GameObject fire;
+	public GameObject rubble;
+	public GameObject visuals;
 
 	// fire particles
 	public ParticleSystem fireParticles;
@@ -94,6 +97,13 @@ public class BuildingBlock : MonoBehaviour {
 		}
 		// destroyed
 		destroyedByFire = true;
+		// turn off the collider so it can't set people on fire
+		fire.GetComponent<CapsuleCollider> ().enabled = false;
+		// Destroyed floor tiles may not have rubble
+		if (rubble != null) {
+			rubble.SetActive (true);
+		}
+		DestroyBlock ();
 
 		// smoulder particles
 		fireEmission.rateOverTime = smoulderEmission;
@@ -164,7 +174,8 @@ public class BuildingBlock : MonoBehaviour {
 
 				// temporary to see where the fire is
 				//transform.position = transform.position + new Vector3(0, 0.1f, 0);
-				transform.FindChild ("Fire").gameObject.SetActive (true);
+				//transform.FindChild ("Fire").gameObject.SetActive (true);
+				fire.SetActive (true);
 				if (SetAlight != null) {
 					SetAlight ();
 				}
@@ -184,7 +195,8 @@ public class BuildingBlock : MonoBehaviour {
 				currentFuelSeconds = 0;
 				// temporary to visually debug
 				//transform.position = transform.position + new Vector3 (0, -0.25f, 0);
-				transform.FindChild ("Fire").gameObject.SetActive (false);
+				//transform.FindChild ("Fire").gameObject.SetActive (false);
+				fire.SetActive (false);
 
 				if (FireQuenched != null) {
 					FireQuenched ();
@@ -199,9 +211,24 @@ public class BuildingBlock : MonoBehaviour {
 			hitPoints -= breakStrength;
 			if (hitPoints <= 0) {
 				// break this object with fists or an axe
-				GetComponent<Collider> ().enabled = false;
-				GetComponent<MeshRenderer>().enabled = false;
+				//GetComponent<Collider> ().enabled = false;
+				//GetComponent<MeshRenderer>().enabled = false;
+				DestroyBlock ();
 			}
+		}
+	}
+
+	void DestroyBlock()
+	{
+		// hides the visuals and disables the collider
+		GetComponent<Collider> ().enabled = false;
+		// this the renderer for the boxCollider
+		// walls and floor may keep this.
+		// doors and furniture will probably use models instead
+		GetComponent<MeshRenderer>().enabled = false;
+		if (visuals != null) {
+			// this would be the door model
+			visuals.SetActive (false);
 		}
 	}
 		

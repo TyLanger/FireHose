@@ -15,10 +15,15 @@ public class Hose : MonoBehaviour {
 	public Transform hitTrans;
 	public bool canSee = false;
 
+	LinkedList<Vector3> points;
 
 	IEnumerator CheckHose()
 	{
 		RaycastHit hit;
+		points = new LinkedList<Vector3> ();
+		points.AddFirst (anchorPoint);
+
+
 		while (moving) {
 			// hose runs from where it is attached to the truck
 			// fire a ray from the start to the player holding the nozzle
@@ -34,7 +39,15 @@ public class Hose : MonoBehaviour {
 			// raycast ignores the object casting it...
 			// That's the object I want to hit...
 
-			Debug.DrawRay (anchorPoint, (target.position - anchorPoint), Color.blue);
+			// Draw the line of where you've been
+			LinkedListNode<Vector3> prev = points.First;
+			while (prev.Next != null) {
+				Debug.DrawLine (prev.Value, prev.Next.Value, Color.blue);
+				prev = prev.Next;
+			}
+
+
+			//Debug.DrawRay (anchorPoint, (target.position - anchorPoint), Color.blue);
 			Debug.DrawRay (lastPoint, Vector3.forward, Color.red);
 			if (Physics.Raycast (anchorPoint, (target.position - anchorPoint), out hit)) {
 				hitTrans = hit.transform;
@@ -45,7 +58,8 @@ public class Hose : MonoBehaviour {
 					//Debug.Break ();
 					canSee = false;
 					//anchorPoint = lastPoint;
-					anchorPoint = anchorPoint + (lastPoint - anchorPoint).normalized * (hit.distance+0.01f);
+					anchorPoint = anchorPoint + (lastPoint - anchorPoint).normalized * (hit.distance+0.1f);
+					points.AddLast (anchorPoint);
 				}
 			}
 

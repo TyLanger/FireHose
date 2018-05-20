@@ -33,12 +33,15 @@ public class BuildingBlock : MonoBehaviour {
 
 	// fire particles
 	public ParticleSystem fireParticles;
+	public Material smoulderMat;
+	public Color smoulderColour;
 	ParticleSystem.EmissionModule fireEmission;
 	ParticleSystem.MainModule fireMain;
+	ParticleSystemRenderer fireRenderer;
 
 	int smallEmission = 6;
 	int largeEmission = 15;
-	int smoulderEmission = 5;
+	int smoulderEmission = 3;
 
 	// don't change lifetime
 	// change start speed
@@ -71,6 +74,7 @@ public class BuildingBlock : MonoBehaviour {
 		//fireParticles = GetComponentInChildren<ParticleSystem> ();
 		fireEmission = fireParticles.emission;
 		fireMain = fireParticles.main;
+		fireRenderer = fireParticles.GetComponent<ParticleSystemRenderer> ();
 	}
 
 	IEnumerator Burning()
@@ -106,6 +110,10 @@ public class BuildingBlock : MonoBehaviour {
 		DestroyBlock ();
 
 		// smoulder particles
+		if (smoulderMat != null) {
+			fireRenderer.material = smoulderMat;
+			fireRenderer.material.color = smoulderColour;
+		}
 		fireEmission.rateOverTime = smoulderEmission;
 		fireMain.startSpeed = smoulderStartSpeed;
 

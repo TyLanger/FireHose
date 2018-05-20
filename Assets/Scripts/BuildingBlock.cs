@@ -109,6 +109,7 @@ public class BuildingBlock : MonoBehaviour {
 		// Destroyed floor tiles may not have rubble
 		if (rubble != null) {
 			rubble.SetActive (true);
+			rubble.transform.Rotate (Vector3.up, UnityEngine.Random.Range (0, 360));
 		}
 		DestroyBlock ();
 

@@ -110,16 +110,20 @@ public class BuildingBlock : MonoBehaviour {
 		DestroyBlock ();
 
 		// smoulder particles
-		if (smoulderMat != null) {
-			fireRenderer.material = smoulderMat;
-			fireRenderer.material.color = smoulderColour;
-		}
 		fireEmission.rateOverTime = smoulderEmission;
 		fireMain.startSpeed = smoulderStartSpeed;
 
 
 		if (DestroyedByFire != null) {
 			DestroyedByFire ();
+		}
+
+		// wait a bit to let the particles change to the new rate and speed
+		yield return new WaitForSeconds(1);
+
+		if (smoulderMat != null) {
+			fireRenderer.material = smoulderMat;
+			fireRenderer.material.color = smoulderColour;
 		}
 	}
 

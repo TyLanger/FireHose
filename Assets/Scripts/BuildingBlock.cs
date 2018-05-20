@@ -38,10 +38,11 @@ public class BuildingBlock : MonoBehaviour {
 	ParticleSystem.EmissionModule fireEmission;
 	ParticleSystem.MainModule fireMain;
 	ParticleSystemRenderer fireRenderer;
+	ParticleSystem.RotationOverLifetimeModule fireRotation;
 
 	int smallEmission = 6;
 	int largeEmission = 15;
-	int smoulderEmission = 3;
+	int smoulderEmission = 1;
 
 	// don't change lifetime
 	// change start speed
@@ -50,6 +51,7 @@ public class BuildingBlock : MonoBehaviour {
 	float largeStartSpeed = 4;
 	float smoulderStartSpeed = 1;
 
+	float smoulderStartSize = 0.7f;
 
 	// smoke particles
 
@@ -75,6 +77,7 @@ public class BuildingBlock : MonoBehaviour {
 		fireEmission = fireParticles.emission;
 		fireMain = fireParticles.main;
 		fireRenderer = fireParticles.GetComponent<ParticleSystemRenderer> ();
+		fireRotation = fireParticles.rotationOverLifetime;
 	}
 
 	IEnumerator Burning()
@@ -124,6 +127,8 @@ public class BuildingBlock : MonoBehaviour {
 		if (smoulderMat != null) {
 			fireRenderer.material = smoulderMat;
 			fireRenderer.material.color = smoulderColour;
+			fireRotation.enabled = true;
+			fireMain.startSize = smoulderStartSize;
 		}
 	}
 

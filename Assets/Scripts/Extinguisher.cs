@@ -141,6 +141,10 @@ public class Extinguisher : Tool {
 	{
 		
 		base.Drop ();
+		// check here too so I don't start the recharge coroutine twice
+		if (spraying) {
+			StopUse ();
+		}
 		ToolFinished ();
 	}
 

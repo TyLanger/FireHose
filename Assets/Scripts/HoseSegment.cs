@@ -53,7 +53,8 @@ public class HoseSegment : MonoBehaviour {
 				prev.GetComponentInParent<Rigidbody> ().AddForce ((transform.position - prev.position) * force);
 				//prev.GetComponentInParent<Rigidbody> ().velocity = (transform.position - prev.position) * force;
 			}
-			if (Vector3.Distance (transform.position, prev.position) <= maxSeparation && Vector3.Distance (transform.position, next.position) >= minSeparation) {
+			if ( Vector3.Distance (transform.position, next.position) >= minSeparation) {
+				// Vector3.Distance (transform.position, prev.position) <= maxSeparation &&
 				// only move if
 				// not too far from prev
 				// not too close to next

@@ -25,6 +25,8 @@ public class Hose : MonoBehaviour {
 
 	void Start()
 	{
+		anchorPoint = new Vector3 (0, 0.1f, -2);
+
 		points = new LinkedList<Vector3> ();
 		points.AddFirst (anchorPoint);
 
@@ -70,6 +72,13 @@ public class Hose : MonoBehaviour {
 					lastPoint = hit.point;
 					if (currentLength + hit.distance > maxLength) {
 						Debug.Log ("Max length reached, can see.");
+						// if (check = Vector3.MoveTowards (transform.position, transform.position + input, moveSpeed)) 
+						// if(point + check > maxDistance)
+						// transform.position = (point - check) * distanceLeft
+						// else
+						// transform.position = check
+
+						
 					}
 				} else {
 					//Debug.Break ();

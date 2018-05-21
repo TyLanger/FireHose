@@ -31,7 +31,7 @@ public class HoseSegment : MonoBehaviour {
 		switch(hoseType)
 		{
 		case HoseType.Normal:
-			if (Vector3.Distance (transform.position, prev.position) < maxSeparation && Vector3.Distance (transform.position, next.position) > minSeparation) {
+			if (Vector3.Distance (transform.position, prev.position) <= maxSeparation && Vector3.Distance (transform.position, next.position) >= minSeparation) {
 				// Vector3.Distance (transform.position, prev.position) < maxSeparation &&
 				// only move if
 				// not too far from prev
@@ -43,7 +43,8 @@ public class HoseSegment : MonoBehaviour {
 			if (Vector3.Distance (transform.position, next.position) > maxSeparation) {
 				next.GetComponentInParent<Rigidbody> ().AddForce ((transform.position - next.position) * force);
 			} 
-			if (Vector3.Distance (transform.position, next.position) <= maxSeparation && Vector3.Distance (transform.position, next.position) >= minSeparation) {
+			if (Vector3.Distance (transform.position, prev.position) <= maxSeparation && Vector3.Distance (transform.position, next.position) >= minSeparation) {
+				// 
 				transform.position = Vector3.MoveTowards (transform.position, next.position, moveSpeed * Time.fixedDeltaTime);
 			}
 			break;

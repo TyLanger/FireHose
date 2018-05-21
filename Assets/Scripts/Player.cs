@@ -35,8 +35,8 @@ public class Player : MonoBehaviour {
 	bool stopDropAndRoll = false;
 	float rollMoveMultiplier = 0.8f;
 	Vector3 rollStartPos;
-	float distanceOfRoll = 3f;
-	int numRollsToDouse = 2;
+	float distanceOfRoll = 1f;
+	int numRollsToDouse = 6;
 	int numRollsMade = 0;
 
 	float fireHp = 20;

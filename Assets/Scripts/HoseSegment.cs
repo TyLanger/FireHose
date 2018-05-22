@@ -40,6 +40,7 @@ public class HoseSegment : MonoBehaviour {
 			}
 			break;
 		case HoseType.End:
+			// part attached to the nozzle
 			if (Vector3.Distance (transform.position, next.position) > maxSeparation) {
 				next.GetComponentInParent<Rigidbody> ().AddForce ((transform.position - next.position) * force);
 			} 
@@ -49,16 +50,24 @@ public class HoseSegment : MonoBehaviour {
 			}
 			break;
 		case HoseType.Start:
+			// part attached to the hydrant
 			if (Vector3.Distance (transform.position, prev.position) > maxSeparation) {
 				prev.GetComponentInParent<Rigidbody> ().AddForce ((transform.position - prev.position) * force);
 				//prev.GetComponentInParent<Rigidbody> ().velocity = (transform.position - prev.position) * force;
 			}
 			if ( Vector3.Distance (transform.position, next.position) >= minSeparation) {
 				// Vector3.Distance (transform.position, prev.position) <= maxSeparation &&
-				// only move if
-				// not too far from prev
-				// not too close to next
-				transform.position = Vector3.MoveTowards (transform.position, next.position, moveSpeed * Time.fixedDeltaTime);
+
+				float distToPrev = Vector3.Distance (transform.position, prev.position);
+				float speedMultiplier = 1;
+				// Doesn't really work
+				if (distToPrev > maxSeparation) {
+					//speedMultiplier = 0.5f;
+					// multiplier will get to 0, then it will never move again to change away from 0
+					//speedMultiplier = 1 - ((distToPrev - maxSeparation) * (distToPrev - maxSeparation));
+				} 
+
+				transform.position = Vector3.MoveTowards (transform.position, next.position, moveSpeed * Time.fixedDeltaTime * speedMultiplier);
 			}
 			break;
 		}

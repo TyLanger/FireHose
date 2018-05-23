@@ -78,6 +78,18 @@ public class BuildingBlock : MonoBehaviour {
 		fireMain = fireParticles.main;
 		fireRenderer = fireParticles.GetComponent<ParticleSystemRenderer> ();
 		fireRotation = fireParticles.rotationOverLifetime;
+
+		// rotate doors
+		if (blockType == BlockType.Door) {
+			if (zPos > 0) {
+				Debug.Log (xPos + ", " + zPos);
+				if (grid [xPos, zPos - 1].GetComponentInChildren<BuildingBlock> ().blockType == BlockType.Wall) {
+					// the block below is a wall
+					// rotate 90
+					transform.RotateAround (transform.position, Vector3.up, 90);
+				}
+			}
+		}
 	}
 
 	IEnumerator Burning()

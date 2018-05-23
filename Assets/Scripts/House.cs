@@ -5,6 +5,13 @@ using System;
 
 public class House : MonoBehaviour {
 
+	[System.Serializable]
+	public struct ColorMapObject
+	{
+		public Color colour;
+		public GameObject item;
+	}
+
 	public int xSize = 20;
 	public int zSize = 15;
 	public float gridSpacing = 1;
@@ -20,6 +27,11 @@ public class House : MonoBehaviour {
 
 	GameObject[,] groundFloor;
 	GameObject BlockParent;
+
+	public bool useImage = false;
+	public Texture2D floorLayout;
+	public Texture2D furnitureLayout;
+	public ColorMapObject[] mappings;
 
 	public int numFiresStarted = 0;
 	public int numFiresPutOut = 0;
@@ -40,7 +52,10 @@ public class House : MonoBehaviour {
 			Destroy (BlockParent);
 		}
 		BlockParent = new GameObject ("BlockParent");
-
+		if (useImage) {
+			xSize = floorLayout.width;
+			zSize = floorLayout.height;
+		}
 		groundFloor = new GameObject[xSize,zSize];
 		for (int x = 0; x < xSize; x++) {
 			for (int z = 0; z < zSize; z++) {
@@ -60,9 +75,9 @@ public class House : MonoBehaviour {
 				groundFloor [x, z] = copy;
 
 				// set up actions
-				copy.GetComponentInChildren<BuildingBlock>().SetAlight += NewFireStarted;
+				copy.GetComponentInChildren<BuildingBlock> ().SetAlight += NewFireStarted;
 				copy.GetComponentInChildren<BuildingBlock> ().DestroyedByFire += BlockDestroyedByFire;
-				copy.GetComponentInChildren<BuildingBlock>().FireQuenched += FirePutOut;
+				copy.GetComponentInChildren<BuildingBlock> ().FireQuenched += FirePutOut;
 
 			}
 		}
@@ -74,15 +89,45 @@ public class House : MonoBehaviour {
 		maxDestructionPercent = maxDestroyPercent;
 
 		Initialize ();
-		SetRooms ();
-		SetOuterWalls ();
-		SetDoors ();
+		if (useImage) {
+			// build houses using a layout image
+			SetHouseFromImage();
+		} else {
+			// build houses procedurally
+			SetRooms ();
+			SetOuterWalls ();
+			SetDoors ();
+		}
 
 		BuildHouse (transform.position, BlockParent.transform);
 		//RotateWalls ();
 		PlaceRandomVictims();
 
 		StartFire ();
+	}
+
+	void SetHouseFromImage()
+	{
+		foreach (var mapping in mappings) {
+			Debug.Log (mapping.colour);
+		}
+		for (int i = 0; i < floorLayout.width; i++) {
+			for (int j = 0; j < floorLayout.height; j++) {
+				Color c = floorLayout.GetPixel (i, j);
+				//Debug.Log (c);
+				// get the colour at that point in the image
+				// check that colour against the available mapping objects
+				foreach (var mapping in mappings) {
+					if (mapping.colour.Equals (c)) {
+						//Debug.Log ("Match colour: "+c);
+						// if one matches, add the correct item to be created
+						groundFloor [i, j] = mapping.item;
+					} else {
+						//Debug.Log ("No match colour: " + c);
+					}
+				}
+			}
+		}
 	}
 
 	void SetOuterWalls()

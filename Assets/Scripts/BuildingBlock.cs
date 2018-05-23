@@ -82,7 +82,6 @@ public class BuildingBlock : MonoBehaviour {
 		// rotate doors
 		if (blockType == BlockType.Door) {
 			if (zPos > 0) {
-				Debug.Log (xPos + ", " + zPos);
 				if (grid [xPos, zPos - 1].GetComponentInChildren<BuildingBlock> ().blockType == BlockType.Wall) {
 					// the block below is a wall
 					// rotate 90
@@ -251,11 +250,15 @@ public class BuildingBlock : MonoBehaviour {
 	void DestroyBlock()
 	{
 		// hides the visuals and disables the collider
-		GetComponent<Collider> ().enabled = false;
+
 		// this the renderer for the boxCollider
 		// walls and floor may keep this.
 		// doors and furniture will probably use models instead
-		GetComponent<MeshRenderer>().enabled = false;
+		if (blockType != BlockType.Floor) {
+			// floor tiles just get a scorch mark on top of them
+			GetComponent<Collider> ().enabled = false;
+			GetComponent<MeshRenderer> ().enabled = false;
+		}
 		if (visuals != null) {
 			// this would be the door model
 			visuals.SetActive (false);

@@ -10,7 +10,6 @@ public class House : MonoBehaviour {
 	{
 		public Color colour;
 		public GameObject item;
-		public int numBlocks;
 	}
 
 	public int xSize = 20;
@@ -123,12 +122,11 @@ public class House : MonoBehaviour {
 						// furniture.colour.Equals (c) || 
 
 						if (ColoursEqual (furniture.colour, c)) {
-							if (furniture.numBlocks < 2) {
-								// single block or default 0 if value isn't changed
+							
 
 						
-								Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.AngleAxis (GetDegreesFromAlpha (c.a), Vector3.up), parent);
-							} 
+							Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.AngleAxis (GetDegreesFromAlpha (c.a), Vector3.up), parent);
+
 							/*
 						else {
 							// check neighbours to see what rotation it should have and where the center is

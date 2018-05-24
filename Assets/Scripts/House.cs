@@ -161,6 +161,37 @@ public class House : MonoBehaviour {
 		}
 	}
 
+	bool ColoursEqual(Color a, Color b)
+	{
+		
+		/*
+		 * May have different colour channels hold different info
+		 * ex. blue holds rotation
+		if (a.r == b.r) {
+			if (a.g == b.g) {
+				if (a.b == b.b) {
+					return true;
+				}
+			}
+		}
+		return false;
+		*/
+
+		// ignore alpha
+		// alpha holds rotation
+		return (a.r == b.r) && (a.g == b.g) && (a.b == b.b);
+	}
+
+	float GetDegreesFromAlpha(float alpha)
+	{
+		// alpha is 0.0 to 1.0 in unity
+		// 0 to 255 in paint.net
+
+		int a = Mathf.RoundToInt(255 * alpha);
+		// alpha of 209 becomes 90 degree rotation
+		return (a - 200) * 10;
+	}
+
 	/// Assigns the grid based on an input image
 	void SetHouseFromImage()
 	{

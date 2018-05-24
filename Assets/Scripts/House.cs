@@ -10,6 +10,7 @@ public class House : MonoBehaviour {
 	{
 		public Color colour;
 		public GameObject item;
+		public int numBlocks;
 	}
 
 	public int xSize = 20;
@@ -119,7 +120,41 @@ public class House : MonoBehaviour {
 
 				foreach (var furniture in furnitureMappings) {
 					if (furniture.colour.Equals (c)) {
-						Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.identity, parent);
+						if (furniture.numBlocks < 2) {
+							// single block or default 0 if value isn't changed
+
+						
+							Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.identity, parent);
+						} else {
+							// check neighbours to see what rotation it should have and where the center is
+							switch (furniture.numBlocks) {
+							case 2:
+								if (i < furnitureLayout.width - 1) {
+									Color right = furnitureLayout.GetPixel (i+1, j);
+									if (furniture.colour.Equals (right)) {
+										// item continues to the right
+										// check where the wall is. If wall is above, don't rotate
+										// if wall is below, rotate
+										// but some things aren't against walls...
+										// ignoring this for now
+										// spawn in between the 2 tiles
+										Instantiate (furniture.item, bottomLeft + new Vector3 ((i + 0.5f) * gridSpacing, 0, (j) * gridSpacing), Quaternion.identity, parent);
+									} else {
+										// pixel to the right didn't match; check above
+										if (j < furnitureLayout.height - 1) {
+											Color up = furnitureLayout.GetPixel (i, j + 1);
+											if (furniture.colour.Equals (up)) {
+												// pixel above matches
+												// rotate
+												Instantiate (furniture.item, bottomLeft + new Vector3 ((i) * gridSpacing, 0, (j + 0.5f) * gridSpacing), Quaternion.AngleAxis(90, Vector3.up), parent);
+											}
+										}
+									}
+								}
+								// if above and right pixels don't match, that means you've already spwaned this
+								break;
+							}
+						}
 					}
 				}
 			}

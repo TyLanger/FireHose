@@ -32,6 +32,7 @@ public class House : MonoBehaviour {
 	public Texture2D floorLayout;
 	public Texture2D furnitureLayout;
 	public ColorMapObject[] mappings;
+	public ColorMapObject[] furnitureMappings;
 
 	public int numFiresStarted = 0;
 	public int numFiresPutOut = 0;
@@ -100,17 +101,32 @@ public class House : MonoBehaviour {
 		}
 
 		BuildHouse (transform.position, BlockParent.transform);
-		//RotateWalls ();
+		PlaceFurnitureFromImage (transform.position, BlockParent.transform);
+
 		PlaceRandomVictims();
 
 		StartFire ();
 	}
 
+	// Places furniture based on an input image
+	void PlaceFurnitureFromImage(Vector3 bottomLeft, Transform parent)
+	{
+		for (int i = 0; i < furnitureLayout.width; i++) {
+			for (int j = 0; j < furnitureLayout.height; j++) {
+				Color c = furnitureLayout.GetPixel (i, j);
+
+				foreach (var furniture in furnitureMappings) {
+					if (furniture.colour.Equals (c)) {
+						Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.identity, parent);
+					}
+				}
+			}
+		}
+	}
+
+	/// Assigns the grid based on an input image
 	void SetHouseFromImage()
 	{
-		foreach (var mapping in mappings) {
-			Debug.Log (mapping.colour);
-		}
 		for (int i = 0; i < floorLayout.width; i++) {
 			for (int j = 0; j < floorLayout.height; j++) {
 				Color c = floorLayout.GetPixel (i, j);
@@ -122,8 +138,6 @@ public class House : MonoBehaviour {
 						//Debug.Log ("Match colour: "+c);
 						// if one matches, add the correct item to be created
 						groundFloor [i, j] = mapping.item;
-					} else {
-						//Debug.Log ("No match colour: " + c);
 					}
 				}
 			}

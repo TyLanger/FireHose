@@ -117,15 +117,20 @@ public class House : MonoBehaviour {
 		for (int i = 0; i < furnitureLayout.width; i++) {
 			for (int j = 0; j < furnitureLayout.height; j++) {
 				Color c = furnitureLayout.GetPixel (i, j);
+				// ignore empty tiles in input image
+				if (c.a > 0) {
+					foreach (var furniture in furnitureMappings) {
+						// furniture.colour.Equals (c) || 
 
-				foreach (var furniture in furnitureMappings) {
-					if (furniture.colour.Equals (c)) {
-						if (furniture.numBlocks < 2) {
-							// single block or default 0 if value isn't changed
+						if (ColoursEqual (furniture.colour, c)) {
+							if (furniture.numBlocks < 2) {
+								// single block or default 0 if value isn't changed
 
 						
-							Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.identity, parent);
-						} else {
+								Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.AngleAxis (GetDegreesFromAlpha (c.a), Vector3.up), parent);
+							} 
+							/*
+						else {
 							// check neighbours to see what rotation it should have and where the center is
 							switch (furniture.numBlocks) {
 							case 2:
@@ -154,6 +159,9 @@ public class House : MonoBehaviour {
 								// if above and right pixels don't match, that means you've already spwaned this
 								break;
 							}
+						}
+						*/
+
 						}
 					}
 				}

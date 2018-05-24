@@ -101,7 +101,9 @@ public class House : MonoBehaviour {
 		}
 
 		BuildHouse (transform.position, BlockParent.transform);
-		PlaceFurnitureFromImage (transform.position, BlockParent.transform);
+		if (useImage) {
+			PlaceFurnitureFromImage (transform.position, BlockParent.transform);
+		}
 
 		PlaceRandomVictims();
 

@@ -52,7 +52,9 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetButtonDown ("Jump")) {
 			house.CreateNewHouse (maxDestructionPercent);
 		}
-
+		if (Input.GetButtonDown ("Fire3")) {
+			TeleportPlayers ();
+		}
 
 		// Joysticks are in the order they were plugged in
 		if (!p1Joined) {
@@ -185,11 +187,12 @@ public class GameManager : MonoBehaviour {
 		player3.transform.position = pos + new Vector3(0, 0, 0);
 		player4.transform.position = pos + new Vector3(1, 0, 0);
 
-		player1.transform.rotation = Quaternion.Euler (0, 180, 0);
-		player2.transform.rotation = Quaternion.Euler (0, 180, 0);
-		player3.transform.rotation = Quaternion.Euler (0, 180, 0);
-		player4.transform.rotation = Quaternion.Euler (0, 180, 0);
+		//player1.transform.rotation = Quaternion.Euler (0, 180, 0);
+		//player2.transform.rotation = Quaternion.Euler (0, 180, 0);
+		//player3.transform.rotation = Quaternion.Euler (0, 180, 0);
+		//player4.transform.rotation = Quaternion.Euler (0, 180, 0);
 
+		cameraController.PhotoshootPosition ();
 
 
 	}

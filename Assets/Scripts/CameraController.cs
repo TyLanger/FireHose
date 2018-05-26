@@ -6,6 +6,19 @@ public class CameraController : MonoBehaviour {
 
 	Vector3 focusPoint;
 	Vector3 groundOffset;
+	// how high above the ground during the photo
+	Vector3 photoGroundOffset = new Vector3(0, 0.15f, -3);
+	// (x 0, y 1, z -7 to 4)
+	// y == 1 is a decent height
+	// z == -7 shows the whole house or most of the house
+	// z == 4 makes the 4 players take up most of the screen
+	// an angle of -7 shows most of the height of the house
+	// partially cuts off the players' feet to center their heads
+	float photoAngle = -7;
+	//float timeToMoveToEnd = 4;
+	//float endGameTime;
+
+	bool gameOver = false;
 
 	float baseMoveSpeed = 1;
 	float currentMoveSpeed;
@@ -37,10 +50,15 @@ public class CameraController : MonoBehaviour {
 		// smooooth
 		//transform.position = Vector3.SmoothDamp (transform.position, focusPoint, ref velocity, 1);
 
-		// moves the first chunk faster than subsequent chunks
-		// lurch and slide
-		// moves 10% of the distance, then 10% of the remaining distance, then 10% of the.....
-		transform.position = Vector3.Lerp (transform.position, focusPoint, Time.deltaTime * currentMoveSpeed);
+		if (gameOver) {
+			groundOffset = Vector3.Lerp(groundOffset, photoGroundOffset, Time.deltaTime * currentMoveSpeed);
+			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(photoAngle, 0, 0), Time.deltaTime * currentMoveSpeed);
+		}
+			// moves the first chunk faster than subsequent chunks
+			// lurch and slide
+			// moves 10% of the distance, then 10% of the remaining distance, then 10% of the.....
+			transform.position = Vector3.Lerp (transform.position, focusPoint, Time.deltaTime * currentMoveSpeed);
+		
 
 		if (Input.GetButtonDown ("Jump")) {
 
@@ -72,5 +90,11 @@ public class CameraController : MonoBehaviour {
 	{
 		currentMoveSpeed = speed;
 		focusPoint = focalPoint + groundOffset;
+	}
+
+	public void PhotoshootPosition()
+	{
+		gameOver = true;
+		//endGameTime = Time.time;
 	}
 }

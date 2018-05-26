@@ -166,14 +166,44 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	/// Teleports all active players to pose for a photo op in front of the house
+	void TeleportPlayers()
+	{
+		Vector3 pos = house.transform.position + new Vector3 ((house.xSize/2) * house.gridSpacing, 0, -2);
+
+		// tell the players to stop moving
+		// if a player is using an axe when the game ends, they will keep moving....
+		// Going to need some way to stop this
+		player1.GameOver ();
+		player2.GameOver ();
+		player3.GameOver ();
+		player4.GameOver ();
+
+		// teleport the players
+		player1.transform.position = pos + new Vector3(-2, 0, 0);
+		player2.transform.position = pos + new Vector3(-1, 0, 0);
+		player3.transform.position = pos + new Vector3(0, 0, 0);
+		player4.transform.position = pos + new Vector3(1, 0, 0);
+
+		player1.transform.rotation = Quaternion.Euler (0, 180, 0);
+		player2.transform.rotation = Quaternion.Euler (0, 180, 0);
+		player3.transform.rotation = Quaternion.Euler (0, 180, 0);
+		player4.transform.rotation = Quaternion.Euler (0, 180, 0);
+
+
+
+	}
+
 	void GameWon()
 	{
 		Debug.Log ("Game Won");
+		TeleportPlayers ();
 	}
 
 	void HouseDestroyedByFire(int blocksDestroyed, int totalBlocks)
 	{
 		Debug.Log ("Game Lost");
+		TeleportPlayers ();
 
 	}
 }

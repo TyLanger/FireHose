@@ -158,6 +158,18 @@ public class Player : MonoBehaviour {
 		canMove = true;
 	}
 
+	public void GameOver()
+	{
+		// player can't input any more 
+		canMove = false;
+		lookDirection = Vector3.back;
+		// stop tools that use a held button to be used
+		StopTool ();
+
+		// when running the last victim in, the player tps, then keeps running
+		// I don;t want to drop tools. I want people to still be holding them.
+	}
+
 	void StopTool()
 	{
 		if (holdingTool) {
@@ -185,7 +197,9 @@ public class Player : MonoBehaviour {
 			} else {
 				// break down door
 				RaycastHit hit;
-				if (Physics.Raycast (transform.position, transform.forward, out hit, 3)) {
+				// aim the ray slightly above the player's center.
+				// this is to be able to put out fires over top of some furniture
+				if (Physics.Raycast (transform.position + new Vector3(0, 0.5f, 0), transform.forward, out hit, 3)) {
 					if (hit.collider.GetComponent<BuildingBlock> () != null) {
 						if (hit.collider.GetComponent<BuildingBlock> ().blockType == BlockType.Door) {
 							// hit a door

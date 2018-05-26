@@ -10,6 +10,10 @@ public class House : MonoBehaviour {
 	{
 		public Color colour;
 		public GameObject item;
+		// reduce the time to burn of the floor below
+		public int reducedBurnTime;
+		public int width;
+		public int height;
 	}
 
 	public int xSize = 20;
@@ -122,44 +126,32 @@ public class House : MonoBehaviour {
 						// furniture.colour.Equals (c) || 
 
 						if (ColoursEqual (furniture.colour, c)) {
-							
-
-						
-							Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.AngleAxis (GetDegreesFromAlpha (c.a), Vector3.up), parent);
-
-							/*
-						else {
-							// check neighbours to see what rotation it should have and where the center is
-							switch (furniture.numBlocks) {
-							case 2:
-								if (i < furnitureLayout.width - 1) {
-									Color right = furnitureLayout.GetPixel (i+1, j);
-									if (furniture.colour.Equals (right)) {
-										// item continues to the right
-										// check where the wall is. If wall is above, don't rotate
-										// if wall is below, rotate
-										// but some things aren't against walls...
-										// ignoring this for now
-										// spawn in between the 2 tiles
-										Instantiate (furniture.item, bottomLeft + new Vector3 ((i + 0.5f) * gridSpacing, 0, (j) * gridSpacing), Quaternion.identity, parent);
-									} else {
-										// pixel to the right didn't match; check above
-										if (j < furnitureLayout.height - 1) {
-											Color up = furnitureLayout.GetPixel (i, j + 1);
-											if (furniture.colour.Equals (up)) {
-												// pixel above matches
-												// rotate
-												Instantiate (furniture.item, bottomLeft + new Vector3 ((i) * gridSpacing, 0, (j + 0.5f) * gridSpacing), Quaternion.AngleAxis(90, Vector3.up), parent);
-											}
+							float angle = GetDegreesFromAlpha (c.a);
+							Instantiate (furniture.item, bottomLeft + new Vector3 (i * gridSpacing, 0, j * gridSpacing), Quaternion.AngleAxis (angle, Vector3.up), parent);
+							if (furniture.reducedBurnTime != 0) {
+								for (int x = 0; x < furniture.width; x++) {
+									for (int y = 0; y < furniture.height; y++) {
+										// reduce the light time off all tiles
+										// the tiles to be changed changes with the rotation
+										switch((int)angle)
+										{
+										case 0:
+											groundFloor [i + x, j + y].GetComponentInChildren<BuildingBlock> ().ReduceLightTime (furniture.reducedBurnTime);
+											break;
+										case 90:
+											groundFloor [i - y, j + x].GetComponentInChildren<BuildingBlock> ().ReduceLightTime (furniture.reducedBurnTime);
+											break;
+										case 180:
+											groundFloor [i - x, j - y].GetComponentInChildren<BuildingBlock> ().ReduceLightTime (furniture.reducedBurnTime);
+											break;
+										case 270:
+											groundFloor [i + y, j - x].GetComponentInChildren<BuildingBlock> ().ReduceLightTime (furniture.reducedBurnTime);
+											break;
 										}
 									}
 								}
-								// if above and right pixels don't match, that means you've already spwaned this
-								break;
-							}
-						}
-						*/
 
+							}
 						}
 					}
 				}
@@ -169,19 +161,6 @@ public class House : MonoBehaviour {
 
 	bool ColoursEqual(Color a, Color b)
 	{
-		
-		/*
-		 * May have different colour channels hold different info
-		 * ex. blue holds rotation
-		if (a.r == b.r) {
-			if (a.g == b.g) {
-				if (a.b == b.b) {
-					return true;
-				}
-			}
-		}
-		return false;
-		*/
 
 		// ignore alpha
 		// alpha holds rotation
@@ -353,7 +332,7 @@ public class House : MonoBehaviour {
 		numBlocksDestroyedByFire++;
 		if (numBlocksDestroyedByFire > (xSize * zSize) * maxDestructionPercent && !gameLost) {
 			gameLost = true;
-			Debug.Log("You lose. "+numBlocksDestroyedByFire + " blocks destroyed by fire");
+			Debug.Log("You lose. "+numBlocksDestroyedByFire + " blocks destroyed by fire at "+Time.time);
 			if (HouseDestroyedByFire != null) {
 				HouseDestroyedByFire (numBlocksDestroyedByFire, xSize*zSize);
 			}

@@ -21,7 +21,7 @@ public class BuildingBlock : MonoBehaviour {
 	bool onFire = false;
 	bool destroyedByFire = false;
 
-	float distantBurnMultiplier = 0.5f;
+	float distantBurnMultiplier = 0.65f;
 
 	public event Action SetAlight;
 	public event Action DestroyedByFire;
@@ -97,6 +97,10 @@ public class BuildingBlock : MonoBehaviour {
 		fireEmission.rateOverTime = smallEmission;
 		fireMain.startSpeed = smallStartSpeed;
 
+		// some fires start out half grown
+		// drops time to lose ~ 10 seconds
+		//float r = UnityEngine.Random.Range (0, 0.75f);
+		//currentFuelSeconds += r * r * growthTime;
 		while (currentFuelSeconds < growthTime) {
 			currentFuelSeconds += Time.fixedDeltaTime;
 			yield return new WaitForFixedUpdate();
@@ -144,52 +148,66 @@ public class BuildingBlock : MonoBehaviour {
 		}
 	}
 
-	///  Burn neighbours (4 connected)
+	///  Burn neighbours (4 connected) plus spaces 2 away for 12 total
 	void BurnNeighbours()
 	{
-		
+		// add some randomness to the fire
+		// with 0.8 to 1.5 squared, time to lose drops ~8 seconds (meaning you lose 8 seconds sooner if you don't put out any fires
+		float r = UnityEngine.Random.Range (0.8f, 1.5f);
+		r *= r;
 		if (xPos + 1 < grid.GetLength (0)) {
-			grid [xPos + 1, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime);
+			grid [xPos + 1, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r);
 		}
 		if (xPos > 0) {
-			grid [xPos - 1, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime);
+			grid [xPos - 1, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r);
 		}
 		if (zPos + 1 < grid.GetLength (1)) {
-			grid [xPos, zPos + 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime);
+			grid [xPos, zPos + 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r);
 		}
 		if (zPos > 0) {
-			grid [xPos, zPos - 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime);
+			grid [xPos, zPos - 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r);
 		}
 
 
 		// burn 2 distance away
 		if (xPos + 2 < grid.GetLength (0)) {
-			grid [xPos + 2, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos + 2, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 		if (xPos-1 > 0) {
-			grid [xPos - 2, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos - 2, zPos].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 		if (zPos + 2 < grid.GetLength (1)) {
-			grid [xPos, zPos + 2].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos, zPos + 2].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 		if (zPos-1 > 0) {
-			grid [xPos, zPos - 2].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos, zPos - 2].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 
 
 		// diagonal
 		if (xPos + 1 < grid.GetLength (0) && zPos + 1 < grid.GetLength (1)) {
-			grid [xPos + 1, zPos+1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos + 1, zPos+1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 		if (xPos > 0 && zPos + 1 < grid.GetLength (1)) {
-			grid [xPos - 1, zPos+1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos - 1, zPos+1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 		if (xPos + 1 < grid.GetLength (0) && zPos > 0) {
-			grid [xPos+1, zPos - 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos+1, zPos - 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
 		if (xPos > 0 && zPos > 0) {
-			grid [xPos-1, zPos - 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * distantBurnMultiplier);
+			grid [xPos-1, zPos - 1].GetComponentInChildren<BuildingBlock> ().Burn (Time.fixedDeltaTime * r * distantBurnMultiplier);
 		}
+	}
+
+	public void ReduceLightTime(int time)
+	{
+		// Called by furniture being on the tile
+		// reduce the time to light and grow to a big fire
+		// this makes the fire spread faster on these tiles
+		// but raise the destroy time so the total time stays the same.
+		lightTime -= time;
+		growthTime -= time;
+		destroyTime += time * 2;
 	}
 
 	/// Try to set this object on fire

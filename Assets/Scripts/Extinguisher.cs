@@ -64,8 +64,8 @@ public class Extinguisher : Tool {
 				direction = new Vector3((transform.forward.x * Mathf.Cos(angle) - (transform.forward.z * Mathf.Sin(angle))), 0, transform.forward.x * Mathf.Sin(angle) + transform.forward.z * Mathf.Cos(angle));
 				// fire a ray every 10 degrees
 				//Ray r = new Ray(transform.position, direction);
-				Debug.DrawLine(transform.position, transform.position + direction * sprayDistance, Color.blue);
-				if (Physics.Raycast (transform.position, direction, out hit, sprayDistance)) {
+				Debug.DrawLine(particles.transform.position, particles.transform.position + direction * sprayDistance, Color.blue);
+				if (Physics.Raycast (particles.transform.position, direction, out hit, sprayDistance)) {
 					if (hit.collider.tag == "Fire") {
 						if (hit.collider.GetComponentInParent<BuildingBlock> () != null) {
 							hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (currentFuelRate * Time.fixedDeltaTime * douseStrength);

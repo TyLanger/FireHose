@@ -16,11 +16,13 @@ public class PPE : Tool {
 
 	public override void Use ()
 	{
-		// can't use GetComponentInChildren<Renderer>() to access the model
-		Material[] mats = visuals.materials;
-		mats[1] = headNumberMats[GetComponentInParent<Player>().GetPlayerNumber()-1];
-		visuals.materials = mats;
+		if (isHat) {
+			// can't use GetComponentInChildren<Renderer>() to access the model
+			Material[] mats = visuals.materials;
+			mats [1] = headNumberMats [GetComponentInParent<Player> ().GetPlayerNumber () - 1];
+			visuals.materials = mats;
 
+		}
 		base.Use ();
 		// put on the item
 

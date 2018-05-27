@@ -239,7 +239,8 @@ public class BuildingBlock : MonoBehaviour {
 				// fire is put out
 				StopCoroutine ("Burning");
 				onFire = false;
-				currentFuelSeconds = 0;
+				// after the fire is put out, take double the time to relight
+				currentFuelSeconds = - lightTime;
 				// temporary to visually debug
 				//transform.position = transform.position + new Vector3 (0, -0.25f, 0);
 				//transform.FindChild ("Fire").gameObject.SetActive (false);

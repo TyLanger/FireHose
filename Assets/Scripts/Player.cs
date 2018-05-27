@@ -17,6 +17,8 @@ public class Player : MonoBehaviour {
 	bool holdingTool = false;
 	Tool currentTool;
 	public Transform hand;
+	public Vector3 hatPosition;
+	public Vector3 jacketPosition;
 
 	public GameObject shirt;
 
@@ -41,12 +43,19 @@ public class Player : MonoBehaviour {
 	int numRollsToDouse = 6;
 	int numRollsMade = 0;
 
+	float baseFireResistance = 0;
+	float currentFireResistance;
+	float baseLightTime = 0;
+	float lightTimeLeft;
+	// the hp of the fire when you are set on fire
 	float fireHp = 20;
 
 	// Use this for initialization
 	void Start () {
 		currentUsing = ToolType.None;
 		lookDirection = transform.forward;
+		currentFireResistance = baseFireResistance;
+		lightTimeLeft = baseLightTime;
 	}
 	
 	// Update is called once per frame
@@ -319,6 +328,29 @@ public class Player : MonoBehaviour {
 		if (onFire) {
 			onFire = false;
 			fire.SetActive (false);
+			lightTimeLeft = baseLightTime + currentFireResistance;
+		}
+	}
+
+	public void SetFireResistance(float newFireRes)
+	{
+		// called when the player picks up some protective gear
+		// adds new fireRes to old fireRes
+		// this way the hat and jacket stack
+		currentFireResistance += newFireRes;
+		lightTimeLeft += newFireRes;
+	}
+
+	public void PutOnPPE(Transform ppe, float fireRes, bool isHat)
+	{
+		ppe.parent = transform;
+		holdingTool = false;
+		SetFireResistance (fireRes);
+		if (isHat) {
+			ppe.position = transform.position + hatPosition;
+		} else {
+			// if it's not the hat, then it's the jacket
+			ppe.position = transform.position + jacketPosition;
 		}
 	}
 
@@ -336,10 +368,13 @@ public class Player : MonoBehaviour {
 
 	}
 
-	void OnTriggerEnter(Collider col)
+	void OnTriggerStay(Collider col)
 	{
 		if (col.tag == "Fire") {
-			StartOnFire ();
+			lightTimeLeft -= Time.fixedDeltaTime;
+			if (lightTimeLeft < 0) {
+				StartOnFire ();
+			}
 		}
 	}
 }

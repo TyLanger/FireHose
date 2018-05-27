@@ -7,7 +7,13 @@ public class CameraController : MonoBehaviour {
 	Vector3 focusPoint;
 	Vector3 groundOffset;
 	// how high above the ground during the photo
-	Vector3 photoGroundOffset = new Vector3(0, 0.15f, -3);
+	// these are the numbers I need to add by to get the desired end result
+	Vector3 photoGroundOffset = new Vector3(0, 0.15f, -10);
+	float nearZ = -3;
+	float farZ = 10;
+	bool tookPicture = false;
+
+	// this is the desired end result
 	// (x 0, y 1, z -7 to 4)
 	// y == 1 is a decent height
 	// z == -7 shows the whole house or most of the house
@@ -53,6 +59,21 @@ public class CameraController : MonoBehaviour {
 		if (gameOver) {
 			groundOffset = Vector3.Lerp(groundOffset, photoGroundOffset, Time.deltaTime * currentMoveSpeed);
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(photoAngle, 0, 0), Time.deltaTime * currentMoveSpeed);
+			if(transform.position.z < (-2))
+			{
+				// when the camera gets close to the far position
+				// Which is about -2 z
+				// sits at -2 z
+				// at the far position
+				// swap to the near position
+				photoGroundOffset = new Vector3 (photoGroundOffset.x, photoGroundOffset.y, nearZ);
+			}
+			if (photoGroundOffset.z == nearZ && transform.position.z > 4.9f && !tookPicture) {
+				// comes to rest for the near at about 4.9
+				// take a picture
+				tookPicture = true;
+				StartCoroutine (TakePicture ());
+			}
 		}
 			// moves the first chunk faster than subsequent chunks
 			// lurch and slide
@@ -96,5 +117,18 @@ public class CameraController : MonoBehaviour {
 	{
 		gameOver = true;
 		//endGameTime = Time.time;
+	}
+
+	IEnumerator TakePicture()
+	{
+		yield return new WaitForEndOfFrame ();
+
+		//ScreenCapture
+		Texture2D screenImage = new Texture2D(Screen.width, Screen.height);
+		screenImage.ReadPixels (new Rect (0, 0, Screen.width, Screen.height), 0, 0);
+		screenImage.Apply ();
+
+		byte[] imageBytes = screenImage.EncodeToPNG ();
+		System.IO.File.WriteAllBytes ("Screenshots/Screenshot.png", imageBytes);
 	}
 }

@@ -162,7 +162,10 @@ public class Player : MonoBehaviour {
 	{
 		// player can't input any more 
 		canMove = false;
+		// make the player face the camera
 		lookDirection = Vector3.back;
+		// stop any movement the player has
+		moveInput = Vector3.zero;
 		// stop tools that use a held button to be used
 		StopTool ();
 

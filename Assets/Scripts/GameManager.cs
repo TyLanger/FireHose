@@ -111,13 +111,20 @@ public class GameManager : MonoBehaviour {
 		// any characters not joined by the time the leve starts just get left behind at the fire hall
 		// they still exist in the world, but they'll just be napping at a table or something
 		player1 = Instantiate (player, p1Spawn, Quaternion.identity);
-		player1.GetComponent<Renderer> ().material.color = Color.red;
+		//player1.GetComponent<Renderer> ().material.color = Color.red;
+		player1.SetShirtColour (Color.red);
+
 		player2 = Instantiate (player, p2Spawn, Quaternion.identity);
-		player2.GetComponent<Renderer> ().material.color = Color.blue;
+		//player2.GetComponent<Renderer> ().material.color = Color.blue;
+		player2.SetShirtColour (Color.blue);
+
 		player3 = Instantiate (player, p3Spawn, Quaternion.identity);
-		player3.GetComponent<Renderer> ().material.color = Color.green;
+		//player3.GetComponent<Renderer> ().material.color = Color.green;
+		player3.SetShirtColour (Color.green);
+
 		player4 = Instantiate (player, p4Spawn, Quaternion.identity);
-		player4.GetComponent<Renderer> ().material.color = Color.yellow;
+		//player4.GetComponent<Renderer> ().material.color = Color.yellow;
+		player4.SetShirtColour (Color.yellow);
 
 	}
 

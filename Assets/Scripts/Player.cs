@@ -18,6 +18,8 @@ public class Player : MonoBehaviour {
 	Tool currentTool;
 	public Transform hand;
 
+	public GameObject shirt;
+
 	// the effectiveness of doing tasks without the right tools
 	int unarmedDouseStrength = 35;
 	int unarmedBreakStrength = 1;
@@ -156,6 +158,14 @@ public class Player : MonoBehaviour {
 		pickupInput = pickupName;
 		useInput = useName;
 		canMove = true;
+
+	}
+
+	public void SetShirtColour(Color shirtColour)
+	{
+		// set the first material to the shirt colour
+		// works as long as the shirt material is first
+		shirt.GetComponent<Renderer> ().material.color = shirtColour;
 	}
 
 	public void GameOver()

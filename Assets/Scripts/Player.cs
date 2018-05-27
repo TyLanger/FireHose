@@ -28,6 +28,7 @@ public class Player : MonoBehaviour {
 
 
 	// Default to keyboard config for easy testing
+	int playerNumber;
 	string horizontalInput = "Horizontal";
 	string verticalInput = "Vertical";
 	string pickupInput = "Fire1";
@@ -160,14 +161,21 @@ public class Player : MonoBehaviour {
 
 	}
 
-	public void Setup(string horName, string vertName, string pickupName, string useName)
+	public void Setup(string horName, string vertName, string pickupName, string useName, int playerNum)
 	{
+		// could have only passed in playerNum and just appended like "Horizontal_P"+playerNum
+		// but I already did it the long way
+		playerNumber = playerNum;
 		horizontalInput = horName;
 		verticalInput = vertName;
 		pickupInput = pickupName;
 		useInput = useName;
 		canMove = true;
+	}
 
+	public int GetPlayerNumber()
+	{
+		return playerNumber;
 	}
 
 	public void SetShirtColour(Color shirtColour)

@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
 				p1Joined = true;
 				numPlayers++;
 				// set up controls when you get input from the controller
-				player1.Setup ("Horizontal_P1", "Vertical_P1", "Pickup_P1", "Use_P1");
+				player1.Setup ("Horizontal_P1", "Vertical_P1", "Pickup_P1", "Use_P1", 1);
 			}
 		}
 		if (!p2Joined) {
@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour {
 				p2Joined = true;
 				numPlayers++;
 
-				player2.Setup ("Horizontal_P2", "Vertical_P2", "Pickup_P2", "Use_P2");
+				player2.Setup ("Horizontal_P2", "Vertical_P2", "Pickup_P2", "Use_P2", 2);
 			}
 		}
 		if (!p3Joined) {
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour {
 				p3Joined = true;
 				numPlayers++;
 
-				player3.Setup ("Horizontal_P3", "Vertical_P3", "Pickup_P3", "Use_P3");
+				player3.Setup ("Horizontal_P3", "Vertical_P3", "Pickup_P3", "Use_P3", 3);
 			}
 		}
 		if (!p4Joined) {
@@ -90,14 +90,14 @@ public class GameManager : MonoBehaviour {
 				Debug.Log ("Keyboard as P4");
 				p4Joined = true;
 				numPlayers++;
-				player4.Setup("Horizontal", "Vertical", "Fire1", "Fire2");
+				player4.Setup("Horizontal", "Vertical", "Fire1", "Fire2", 4);
 			}
 			if (Input.GetButtonDown ("Pickup_P4")) {
 				Debug.Log ("Player 4 joined");
 				p4Joined = true;
 				numPlayers++;
 
-				player4.Setup ("Horizontal_P4", "Vertical_P4", "Pickup_P4", "Use_P4");
+				player4.Setup ("Horizontal_P4", "Vertical_P4", "Pickup_P4", "Use_P4", 4);
 			}
 		}
 

@@ -4,7 +4,32 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-
+	// random things to say when set on fire
+	// only need to say 1 thing when you get set on fire probably?
+	// maybe a second thing after you stay on fire?
+	string[] onFireMessages = {
+		"Ah, I'm on fire",
+		"Oh gee",
+		"This is mighty inconvenient",
+		"I swear, this never happens",
+		"Stop, drop, and roll",
+		"Put me out!",
+		"It's getting hot in here",
+		"Uh oh",
+		"The fire has gotten me",
+		"I am on fire",
+		"I seem to be ablaze",
+		"Anyone got a light?",
+		"Those are flames on my arms",
+		"Am I hot or what?",
+		"Uh oh",
+		"This isn't good",
+		"I better put this out",
+		"Halt, fall, and turn I think?",
+		"Go, jump, and tumble?",
+		"Um.. Stop, drop, and hmmm...",
+		"I'll take a water, please"
+	};
 
 	public float moveSpeed = 1;
 	Vector3 moveInput;

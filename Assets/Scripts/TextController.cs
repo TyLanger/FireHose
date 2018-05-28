@@ -11,7 +11,8 @@ public class TextController : MonoBehaviour {
 	Color fadeColour;
 
 	TextMesh word;
-	public TextMesh outline;
+	//public TextMesh outline;
+
 
 	float riseSpeed = 1.5f;
 
@@ -39,7 +40,7 @@ public class TextController : MonoBehaviour {
 			DestroyText ();
 		}
 		word.color = Color.Lerp (originalColour, fadeColour, (Time.time - spawnTime) / fadeTime);
-		outline.color = Color.Lerp(Color.black, Color.clear, (Time.time - spawnTime) / fadeTime);
+		//outline.color = Color.Lerp(Color.black, Color.clear, (Time.time - spawnTime) / fadeTime);
 
 		transform.position = Vector3.MoveTowards (transform.position, transform.position + Vector3.up, riseSpeed * Time.fixedDeltaTime);
 	}
@@ -58,6 +59,6 @@ public class TextController : MonoBehaviour {
 
 
 		word.text = text;
-		outline.text = text;
+		//outline.text = text;
 	}
 }

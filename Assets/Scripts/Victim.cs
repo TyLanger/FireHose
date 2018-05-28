@@ -7,6 +7,7 @@ public class Victim : Tool {
 	float timeOfNextQuip = 0;
 	float timeBetweenQuips = 4;
 	public TextController textMesh;
+	Vector3 textSpawnPoint = Vector3.up;
 	string[] helpMessages = {
 		"Help",
 		"Help me",
@@ -146,7 +147,7 @@ public class Victim : Tool {
 	{
 		//Debug.Log (message);
 		//Instantiate(text3D);
-		TextController t = Instantiate(textMesh, transform.position, FindObjectOfType<Camera>().transform.rotation) as TextController;
+		TextController t = Instantiate(textMesh, transform.position + textSpawnPoint, FindObjectOfType<Camera>().transform.rotation) as TextController;
 		t.SetText (message);
 	}
 }

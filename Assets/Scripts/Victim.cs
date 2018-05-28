@@ -6,6 +6,7 @@ public class Victim : Tool {
 
 	float timeOfNextQuip = 0;
 	float timeBetweenQuips = 4;
+	public TextController textMesh;
 	string[] helpMessages = {
 		"Help",
 		"Help me",
@@ -57,7 +58,7 @@ public class Victim : Tool {
 	protected override void  Start()
 	{
 		base.Start();
-		timeBetweenQuips = Random.Range (0, timeBetweenQuips);
+		timeOfNextQuip = Random.Range (0, timeBetweenQuips);
 		StartCoroutine (RescueCheck ());
 	}
 
@@ -65,7 +66,7 @@ public class Victim : Tool {
 	{
 		while (true) {
 			if (Time.time > timeOfNextQuip) {
-				timeOfNextQuip = Time.time + timeBetweenQuips + Random.Range (0, 2);
+				timeOfNextQuip = Time.time + timeBetweenQuips + Random.Range (0.0f, 2.0f);
 				if (beingCarried) {
 					SayMessage (carryMessages [Random.Range (0, carryMessages.Length)]);
 				} else {
@@ -143,7 +144,9 @@ public class Victim : Tool {
 
 	void SayMessage(string message)
 	{
-		Debug.Log (message);
+		//Debug.Log (message);
 		//Instantiate(text3D);
+		TextController t = Instantiate(textMesh, transform.position, FindObjectOfType<Camera>().transform.rotation) as TextController;
+		t.SetText (message);
 	}
 }

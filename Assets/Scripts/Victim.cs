@@ -8,6 +8,7 @@ public class Victim : Tool {
 	float timeBetweenQuips = 4;
 	public TextController textMesh;
 	Vector3 textSpawnPoint = Vector3.up;
+	static int lastHelpIndex;
 	string[] helpMessages = {
 		"Help",
 		"Help me",
@@ -71,7 +72,15 @@ public class Victim : Tool {
 				if (beingCarried) {
 					SayMessage (carryMessages [Random.Range (0, carryMessages.Length)]);
 				} else {
-					SayMessage (helpMessages [Random.Range (0, helpMessages.Length)]);
+					int r;
+					do {
+						r = Random.Range (0, helpMessages.Length);
+						// if r is equal to lastHelpIndex (the last message played by any victim)
+						// choose another
+					} while(r == lastHelpIndex);
+					//Debug.Log("static: "+lastHelpIndex+"->"+r);
+					lastHelpIndex = r;
+					SayMessage (helpMessages [r]);
 				}
 			}
 

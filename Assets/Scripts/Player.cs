@@ -38,6 +38,8 @@ public class Player : MonoBehaviour {
 
 	ToolType currentUsing;
 
+	// raise where the ray is fired from. Should make it easier to pick up objects on top of furniture
+	Vector3 pickupPosition = new Vector3(0, 0.25f, 0);
 	// may change to make it so you can hold multiple of some things
 	bool holdingTool = false;
 	Tool currentTool;
@@ -253,8 +255,9 @@ public class Player : MonoBehaviour {
 				// break down door
 				RaycastHit hit;
 				// aim the ray slightly above the player's center.
+				// same height they try to pick up new tools from
 				// this is to be able to put out fires over top of some furniture
-				if (Physics.Raycast (transform.position + new Vector3(0, 0.5f, 0), transform.forward, out hit, 3)) {
+				if (Physics.Raycast (transform.position + pickupPosition, transform.forward, out hit, 3)) {
 					if (hit.collider.GetComponent<BuildingBlock> () != null) {
 						if (hit.collider.GetComponent<BuildingBlock> ().blockType == BlockType.Door) {
 							// hit a door
@@ -307,7 +310,8 @@ public class Player : MonoBehaviour {
 			if (!onFire && !stopDropAndRoll) {
 				// pick up object in front of you
 				RaycastHit hit;
-				if (Physics.Raycast (transform.position, transform.forward, out hit, 2, LayerMask.GetMask ("Tool"))) {
+				Debug.DrawRay (transform.position + pickupPosition, transform.forward, Color.green);
+				if (Physics.Raycast (transform.position + pickupPosition, transform.forward, out hit, 2, LayerMask.GetMask ("Tool"))) {
 					//Debug.Log ("Hit something");
 					if (hit.collider.GetComponentInChildren<Tool> () != null) {
 						// hit a tool

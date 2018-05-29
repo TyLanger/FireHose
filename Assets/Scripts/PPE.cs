@@ -13,7 +13,6 @@ public class PPE : Tool {
 	public Renderer visuals;
 	public Material[] headNumberMats;
 
-
 	public override void Use ()
 	{
 		if (isHat) {

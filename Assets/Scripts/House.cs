@@ -282,6 +282,16 @@ public class House : MonoBehaviour {
 			int x = UnityEngine.Random.Range (0, xSize);
 			int z = UnityEngine.Random.Range (0, zSize);
 
+			if (useImage) {
+				Color c = furnitureLayout.GetPixel (x, z);
+				if (c.a > 0) {
+					// some furniiture exists here; do not spawn
+					// but some spawn locations are also bad
+					// the bed only takes up 1 pixel, but has 6-12 bad spawn spots
+					// could put in the input image where to not spawn...
+				}
+			}
+
 			if (groundFloor [x, z].GetComponentInChildren<BuildingBlock> ().blockType == BlockType.Floor) {
 				// only spawn victims on the floor
 

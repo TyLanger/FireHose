@@ -28,7 +28,8 @@ public class Player : MonoBehaviour {
 		"Halt, fall, and turn I think?",
 		"Go, jump, and tumble?",
 		"Um.. Stop, drop, and hmmm...",
-		"I'll take a water, please"
+		"I'll take a water, please",
+        "Being on fire is the worst"
 	};
 
 	public float moveSpeed = 1;
@@ -70,6 +71,7 @@ public class Player : MonoBehaviour {
 	float distanceOfRoll = 1f;
 	int numRollsToDouse = 6;
 	int numRollsMade = 0;
+    public float rollRotationMultiplier = 10;
 
 	float baseFireResistance = 0;
 	float currentFireResistance;
@@ -122,71 +124,82 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	void FixedUpdate () {
-		switch(currentUsing)
-		{
-		case ToolType.None:
-			if (stopDropAndRoll) {
-				// Stop Drop and Roll movement
+    void FixedUpdate()
+    {
+        switch (currentUsing)
+        {
+            case ToolType.None:
+                if (stopDropAndRoll)
+                {
+                    // Stop Drop and Roll movement
 
-				// only get horizontal input
-				// this could be changed later to be able to roll up and down or on a diagonal instead of only left tot right
-				transform.position = Vector3.MoveTowards (transform.position, transform.position + new Vector3 (moveInput.x, 0, 0), rollMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
-				if(onFire)
-				{
-					if (Mathf.Abs (transform.position.x - rollStartPos.x) > distanceOfRoll) {
-						// if the difference between the current pos and start pos is greater than the distance of a roll, made a succesful roll
-						// made a roll
-						// Problem: once you hit the roll threshold, you can stay in that position and after the right number of updates, you will be put out
-						// Solution: set a new starting pos after every roll.
-						// Minor: this means you can just roll in one direction, you don't have to roll back and forth
-						// If you lay down in a position where you can't roll distanceOfRoll in either direction, you can't put yourself out
-						rollStartPos = transform.position;
-						numRollsMade++;
-						Debug.Log ("Roll made");
-						if (numRollsMade == numRollsToDouse) {
-							FirePutOut ();
-						}
-					}
-				}
-			} else {
-				// Normal Movement
+                    // only get horizontal input
+                    // this could be changed later to be able to roll up and down or on a diagonal instead of only left tot right
+                    transform.position = Vector3.MoveTowards(transform.position, transform.position + new Vector3(moveInput.x, 0, 0), rollMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+                    if (moveInput.x != 0)
+                    {
+                        // rotation speed should be based on movement speed too
+                        transform.RotateAround(transform.position, Vector3.forward, moveInput.x * rollMoveMultiplier * moveSpeed * Time.fixedDeltaTime * rollRotationMultiplier);
+                    }
+                    if (onFire)
+                    {
+                        if (Mathf.Abs(transform.position.x - rollStartPos.x) > distanceOfRoll)
+                        {
+                            // if the difference between the current pos and start pos is greater than the distance of a roll, made a succesful roll
+                            // made a roll
+                            // Problem: once you hit the roll threshold, you can stay in that position and after the right number of updates, you will be put out
+                            // Solution: set a new starting pos after every roll.
+                            // Minor: this means you can just roll in one direction, you don't have to roll back and forth
+                            // If you lay down in a position where you can't roll distanceOfRoll in either direction, you can't put yourself out
+                            rollStartPos = transform.position;
+                            numRollsMade++;
+                            Debug.Log("Roll made");
+                            if (numRollsMade == numRollsToDouse)
+                            {
+                                FirePutOut();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Normal Movement
 
-				// transform.forward*moveInput.magnitude makes the player have to do circles to turn around
-				// they always move forward and rely on turn speed to be able to turn. Multiplying by moveInput.magnitude makes it so the player doesn't move when not pressing anything
-				transform.position = Vector3.MoveTowards (transform.position, transform.position + moveInput, moveSpeed * Time.fixedDeltaTime);
-				// use lastMove input so it is never 0
-				// lookDirection is the last "actual" input, no 0 when not pressing movement buttons
-				// makes character face where they are moving and stay facing that direction when no movement
-				transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, turnSpeed * Time.fixedDeltaTime, 1);
-			}
-			break;
-		case ToolType.Axe:
-			transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
-			//transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
-			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
-			break;
-		case ToolType.Hose:
-			// move away from the water coming out of the hose
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
-			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
-			break;
-		case ToolType.Extinguisher:
-			// move backwards away from the direction the extinguisher is shooting
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
-			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
-			break;
-		case ToolType.Victim:
-			// can move normally
-			// just slower
-			transform.position = Vector3.MoveTowards (transform.position, transform.position + moveInput, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
-			transform.forward = Vector3.RotateTowards (transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
-			break;
-		}
+                    // transform.forward*moveInput.magnitude makes the player have to do circles to turn around
+                    // they always move forward and rely on turn speed to be able to turn. Multiplying by moveInput.magnitude makes it so the player doesn't move when not pressing anything
+                    transform.position = Vector3.MoveTowards(transform.position, transform.position + moveInput, moveSpeed * Time.fixedDeltaTime);
+                    // use lastMove input so it is never 0
+                    // lookDirection is the last "actual" input, no 0 when not pressing movement buttons
+                    // makes character face where they are moving and stay facing that direction when no movement
+                    transform.forward = Vector3.RotateTowards(transform.forward, lookDirection, turnSpeed * Time.fixedDeltaTime, 1);
+                }
+                break;
+            case ToolType.Axe:
+                transform.position = currentTool.MoveTowards(transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
+                //transform.position = Vector3.MoveTowards (transform.position, transform.position + transform.forward,  currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+                transform.forward = Vector3.RotateTowards(transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+                break;
+            case ToolType.Hose:
+                // move away from the water coming out of the hose
+                transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+                transform.forward = Vector3.RotateTowards(transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+                break;
+            case ToolType.Extinguisher:
+                // move backwards away from the direction the extinguisher is shooting
+                transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+                transform.forward = Vector3.RotateTowards(transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+                break;
+            case ToolType.Victim:
+                // can move normally
+                // just slower
+                transform.position = Vector3.MoveTowards(transform.position, transform.position + moveInput, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+                transform.forward = Vector3.RotateTowards(transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
+                break;
+        }
 
-		//transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
+        //transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
 
-	}
+    }
 
 	public void Setup(string horName, string vertName, string pickupName, string useName, int playerNum)
 	{
@@ -245,12 +258,19 @@ public class Player : MonoBehaviour {
 			if (onFire && !stopDropAndRoll) {
 				// go into stop drop and roll mode
 				stopDropAndRoll = true;
+                // lay down
+                transform.rotation = Quaternion.Euler(90, 0, 0);
 				numRollsMade = 0;
 				rollStartPos = transform.position;
-			} else if (!onFire && stopDropAndRoll) {
-				// you have now put yourself out, but are still rolling on the ground
-				// press use again to stand up
-				stopDropAndRoll = false;
+			} else if (stopDropAndRoll) {
+                // !onFire && 
+                // able to get up whenever
+                // you have now put yourself out, but are still rolling on the ground
+                // press use again to stand up
+                // move the player up a bit. They will rotate back into position automatically.
+                // moving them above the floor makes it so they don't get bounced around by the physics
+                transform.position = transform.position + Vector3.up;
+                stopDropAndRoll = false;
 			} else {
 				// break down door
 				RaycastHit hit;

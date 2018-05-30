@@ -33,7 +33,13 @@ public class GameManager : MonoBehaviour {
 	[Range(0, 1)]
 	public float maxDestructionPercent = 0.5f;
 
-	bool allFiresOut = false;
+    public Texture2D map1Layout;
+    public Texture2D map1Furniture;
+    public Texture2D map2Layout;
+    public Texture2D map2Furniture;
+
+
+    bool allFiresOut = false;
 	bool allRescued = false;
 
 	// Use this for initialization
@@ -49,9 +55,11 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        /* Use the UI buttons
 		if (Input.GetButtonDown ("Jump")) {
 			house.CreateNewHouse (maxDestructionPercent);
 		}
+        */
 		if (Input.GetButtonDown ("Fire3")) {
 			TeleportPlayers ();
 		}
@@ -203,6 +211,22 @@ public class GameManager : MonoBehaviour {
 
 
 	}
+
+    public void StartHouse(int houseNum)
+    {
+        // start the game with the specified house setup
+        if (houseNum == 1)
+        {
+            house.floorLayout = map1Layout;
+            house.furnitureLayout = map1Furniture;
+        }
+        else if (houseNum == 2)
+        {
+            house.floorLayout = map2Layout;
+            house.furnitureLayout = map2Furniture;
+        }
+        house.CreateNewHouse(maxDestructionPercent);
+    }
 
 	void GameWon()
 	{

@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	// random things to say when set on fire
-	// only need to say 1 thing when you get set on fire probably?
-	// maybe a second thing after you stay on fire?
-	string[] onFireMessages = {
+    // random things to say when set on fire
+    // only need to say 1 thing when you get set on fire probably?
+    // maybe a second thing after you stay on fire?
+    public TextController textMesh;
+    Vector3 textSpawnPoint = Vector3.up;
+    // if the player doesn't put themselves out, remind them this often
+    float timeOfNextQuip = 0;
+    float timeBetweenQuips = 4;
+    string[] onFireMessages = {
 		"Ah, I'm on fire",
 		"Oh gee",
 		"This is mighty inconvenient",
@@ -121,6 +126,16 @@ public class Player : MonoBehaviour {
 				// set lookDirection only if input is not 0
 				lookDirection = moveInput;
 			}
+
+            if(onFire)
+            {
+                if(timeOfNextQuip < Time.time)
+                {
+                    timeOfNextQuip = Time.time + timeBetweenQuips + UnityEngine.Random.Range(0.0f, 2.0f);
+                    SayMessage(onFireMessages[UnityEngine.Random.Range(0, onFireMessages.Length)]);
+                }
+
+            }
 		}
 	}
 
@@ -421,11 +436,22 @@ public class Player : MonoBehaviour {
 			fire.SetActive (true);
 			// if holding something, drop it. If it's the axe, you can't drop it
 			PickUp ();
+            SayMessage(onFireMessages[UnityEngine.Random.Range(0, onFireMessages.Length)]);
+            timeOfNextQuip = Time.time + timeBetweenQuips + UnityEngine.Random.Range(0.0f, 2.0f);
 		}
 
 	}
 
-	void OnTriggerStay(Collider col)
+    void SayMessage(string message)
+    {
+        // Ripped 1:1 from Victim
+        //Debug.Log (message);
+        //Instantiate(text3D);
+        TextController t = Instantiate(textMesh, transform.position + textSpawnPoint, FindObjectOfType<Camera>().transform.rotation) as TextController;
+        t.SetText(message);
+    }
+
+    void OnTriggerStay(Collider col)
 	{
 		if (col.tag == "Fire") {
 			lightTimeLeft -= Time.fixedDeltaTime;

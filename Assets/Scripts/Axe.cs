@@ -92,6 +92,10 @@ public class Axe : Tool {
 				//Destroy (col.gameObject);
 				col.GetComponent<BuildingBlock> ().Break (breakStrength);
 			}
+            if(col.tag == "Furniture")
+            {
+                Destroy(col.gameObject);
+            }
 		}
 	}
 

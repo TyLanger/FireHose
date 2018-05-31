@@ -18,7 +18,16 @@ public class ButtonPrompt : MonoBehaviour {
         transform.rotation = cameraTrans.rotation;
         spriteRenderer = GetComponent<Renderer>();
         SetVisible(false);
-        GetComponent<SphereCollider>().radius = sphereRadius;
+        if (GetComponent<SphereCollider>() != null)
+        {
+            // for the prompt to pick up tools
+            GetComponent<SphereCollider>().radius = sphereRadius;
+        }
+        else
+        {
+            // for the b prompt on being set on fire
+            SetVisible(true);
+        }
 	}
 	
 	// Update is called once per frame

@@ -114,10 +114,7 @@ public class Player : MonoBehaviour {
 				//Debug.Log ("Fire2");
 				StopTool ();
 			}
-			if (Input.GetButtonDown ("Fire3")) {
-				// testing. Force yourself to start on fire
-				StartOnFire ();
-			}
+			
 
 			// wasd
 			// left stick for snes controller
@@ -274,7 +271,7 @@ public class Player : MonoBehaviour {
 				// go into stop drop and roll mode
 				stopDropAndRoll = true;
                 // lay down
-                transform.rotation = Quaternion.Euler(90, 0, 0);
+                transform.rotation = Quaternion.Euler(-90, 0, 0);
 				numRollsMade = 0;
 				rollStartPos = transform.position;
 			} else if (stopDropAndRoll) {

@@ -23,7 +23,6 @@ public class FireNozzle : Extinguisher {
 	Transform carrierTrans;
 	public Transform hitTrans;
 
-	public Hose hose;
 
 	protected override void Start()
 	{
@@ -82,8 +81,8 @@ public class FireNozzle : Extinguisher {
 	{
 		base.PickUp (parent);
 		moving = true;
-		hose.SetTarget (parent.parent);
-		hose.StartMoving ();
+		//hose.SetTarget (parent.parent);
+		//hose.StartMoving ();
 		//StartCoroutine (CheckHose ());
 		//Debug.Log ("Started coroutine");
 	}
@@ -93,6 +92,6 @@ public class FireNozzle : Extinguisher {
 		base.Drop ();
 		moving = false;
 		// setting moving to false will stop the CheckHose coroutine
-		hose.StopMoving();
+		//hose.StopMoving();
 	}
 }

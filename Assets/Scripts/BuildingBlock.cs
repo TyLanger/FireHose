@@ -164,7 +164,7 @@ public class BuildingBlock : MonoBehaviour {
 
 				// temporary to see where the fire is
 				//transform.position = transform.position + new Vector3(0, 0.1f, 0);
-				transform.FindChild ("Fire").gameObject.SetActive (true);
+				transform.Find ("Fire").gameObject.SetActive (true);
 				if (SetAlight != null) {
 					SetAlight ();
 				}
@@ -184,7 +184,7 @@ public class BuildingBlock : MonoBehaviour {
 				currentFuelSeconds = 0;
 				// temporary to visually debug
 				//transform.position = transform.position + new Vector3 (0, -0.25f, 0);
-				transform.FindChild ("Fire").gameObject.SetActive (false);
+				transform.Find ("Fire").gameObject.SetActive (false);
 
 				if (FireQuenched != null) {
 					FireQuenched ();

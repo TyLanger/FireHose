@@ -17,10 +17,10 @@ public class GameManager : MonoBehaviour {
 	Player player4;
 
 	// default spawn points
-	Vector3 p1Spawn = new Vector3(1, 1.5f, 0);
-	Vector3 p2Spawn = new Vector3(3, 1.5f, 0);
-	Vector3 p3Spawn = new Vector3(1, 1.5f, -2);
-	Vector3 p4Spawn = new Vector3(3, 1.5f, -2);
+	Vector3 p1Spawn = new Vector3(9, 1.5f, 0);
+	Vector3 p2Spawn = new Vector3(11, 1.5f, 0);
+	Vector3 p3Spawn = new Vector3(9, 1.5f, -2);
+	Vector3 p4Spawn = new Vector3(11, 1.5f, -2);
 
 	bool p1Joined = false;
 	bool p2Joined = false;

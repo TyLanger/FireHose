@@ -54,6 +54,8 @@ public class Player : MonoBehaviour {
 	public Vector3 jacketPosition;
 
 	public GameObject shirt;
+    int headNum = 0;
+    public GameObject[] heads;
 
 	// the effectiveness of doing tasks without the right tools
 	int unarmedDouseStrength = 35;
@@ -91,6 +93,21 @@ public class Player : MonoBehaviour {
 		lookDirection = transform.forward;
 		currentFireResistance = baseFireResistance;
 		lightTimeLeft = baseLightTime;
+
+        headNum = UnityEngine.Random.Range(0, heads.Length);
+
+        for (int i = 0; i < heads.Length; i++)
+        {
+            if(i != headNum)
+            {
+                heads[i].SetActive(false);
+            }
+        }
+        
+        // either -1 or 1
+        int facing = (Random.Range(0, 2)*2) - 1;
+        // random chance for the hair to point left or right
+        heads[headNum].transform.localScale = new Vector3(heads[headNum].transform.localScale.x * facing, heads[headNum].transform.localScale.y, heads[headNum].transform.localScale.z);
 	}
 	
 	// Update is called once per frame

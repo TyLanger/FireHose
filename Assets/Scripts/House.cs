@@ -25,6 +25,7 @@ public class House : MonoBehaviour {
 	int numRoomsPerSide = 3;
 
     public GameObject Boundary;
+    public float boundaryHeight;
     // distance to put the boundaries away from the house
     public int sideBuffers = 3;
     public int topBuffer = 5;
@@ -38,6 +39,8 @@ public class House : MonoBehaviour {
 
 	GameObject[,] groundFloor;
 	GameObject BlockParent;
+
+    public GameObject[] tools;
 
 	public bool useImage = false;
 	public Texture2D floorLayout;
@@ -103,23 +106,23 @@ public class House : MonoBehaviour {
         // so the boundaries are all encompassing
         // for even xSizes, the left boundary is 3, the right is 4; Oh well
         var leftB = Instantiate(Boundary, transform.position + new Vector3(-sideBuffers * gridSpacing, 0, (zSize+topBuffer-bottomBuffer)/2 * gridSpacing), Quaternion.identity, parent);
-        leftB.transform.localScale = new Vector3(1, 1, zSize + topBuffer + bottomBuffer);
+        leftB.transform.localScale = new Vector3(1, boundaryHeight, zSize + topBuffer + bottomBuffer);
 
         var rightB = Instantiate(Boundary, transform.position + new Vector3((xSize +sideBuffers) * gridSpacing, 0, (zSize + topBuffer - bottomBuffer) / 2 * gridSpacing), Quaternion.identity, parent);
-        rightB.transform.localScale = new Vector3(1, 1, zSize + topBuffer + bottomBuffer);
+        rightB.transform.localScale = new Vector3(1, boundaryHeight, zSize + topBuffer + bottomBuffer);
 
         var topB = Instantiate(Boundary, transform.position + new Vector3((xSize) / 2 * gridSpacing, 0, (zSize + topBuffer) * gridSpacing), Quaternion.identity, parent);
-        topB.transform.localScale = new Vector3(xSize + sideBuffers*2, 1, 1);
+        topB.transform.localScale = new Vector3(xSize + sideBuffers*2, boundaryHeight, 1);
 
         var bottomB = Instantiate(Boundary, transform.position + new Vector3((xSize) / 2 * gridSpacing, 0, -bottomBuffer * gridSpacing), Quaternion.identity, parent);
-        bottomB.transform.localScale = new Vector3(xSize + sideBuffers * 2, 1, 1);
+        bottomB.transform.localScale = new Vector3(xSize + sideBuffers * 2, boundaryHeight, 1);
 
     }
 
     void MovePlanes()
     {
         // house is at 0.5 in the y. Counteract that
-        FoundationPlane.transform.position = transform.position + new Vector3(xSize * gridSpacing * 0.5f, -0.5f, zSize* gridSpacing * 0.5f);
+        FoundationPlane.transform.position = transform.position + new Vector3((xSize-1) * gridSpacing * 0.5f, -0.5f, (zSize-1)* gridSpacing * 0.5f);
         // this is the scaling for planes. They are already ~10x larger than other things
         FoundationPlane.transform.localScale = new Vector3(xSize, 1, zSize) * 0.1f;
         // move down 0.01 so it is below foundation
@@ -130,7 +133,30 @@ public class House : MonoBehaviour {
 
     void PlaceTools()
     {
+        for (int i = 0; i < tools.Length; i++)
+        {
+            float spawnX = 0;
+            switch(i)
+            {
+                case 0:
+                    spawnX = 3 * gridSpacing;
+                    break;
+                case 1:
+                    spawnX = 6 * gridSpacing;
+                    break;
+                case 2:
+                    spawnX = (xSize - 7) * gridSpacing ;
+                    break;
+                case 3:
+                    spawnX = (xSize - 4) * gridSpacing;
+                    break;
 
+            }
+            for (int j = 0; j < 4; j++)
+            {
+                var t = Instantiate(tools[i], transform.position + new Vector3(spawnX, 0, -4 -(j*2)), Quaternion.identity);
+            }
+        }
     }
 
     public void CreateNewHouse(float maxDestroyPercent)

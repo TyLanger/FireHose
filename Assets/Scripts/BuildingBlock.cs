@@ -282,6 +282,16 @@ public class BuildingBlock : MonoBehaviour {
 			// this would be the door model
 			visuals.SetActive (false);
 		}
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, Vector3.up, out hit, 1))
+        {
+            if(hit.transform.tag == "Furniture")
+            {
+
+                Destroy(hit.transform.gameObject);
+            }
+            //Debug.Log(hit.collider.gameObject);   
+        }
 	}
 		
 

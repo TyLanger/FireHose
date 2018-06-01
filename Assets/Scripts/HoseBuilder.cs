@@ -33,7 +33,7 @@ public class HoseBuilder : MonoBehaviour {
         HoseSegment previous = hoseSegment;
 		HoseSegment copy = hoseSegment;
 		for (int i = 0; i < numSegments; i++) {
-			copy = Instantiate (hoseSegment, transform.position + new Vector3 (i * minSeparation, 0, 0), Quaternion.identity);
+			copy = Instantiate (hoseSegment, transform.position + new Vector3 (i * (minSeparation+0.1f), 0, 0), Quaternion.identity);
 			copy.maxSeparation = this.maxSeparation;
 			copy.minSeparation = this.minSeparation;
 			copy.moveSpeed = this.moveSpeed;
@@ -56,8 +56,9 @@ public class HoseBuilder : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        transform.rotation = Quaternion.identity;
         UpdateMesh();
-
+        
     }
 
     void UpdateMesh()
@@ -78,16 +79,16 @@ public class HoseBuilder : MonoBehaviour {
         Vector3 previousPos;
         Vector3 direction = (current.transform.position - first.transform.position);
 
-        verts[0] = first.transform.position + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
-        verts[1] = first.transform.position + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+        verts[0] = (first.transform.position ) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+        verts[1] = (first.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
 
         int vertIndex = 2;
 
 
         while (current.hoseType != HoseSegment.HoseType.End)
         {
-            verts[vertIndex] = current.transform.position + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
-            verts[vertIndex +1] = current.transform.position + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+            verts[vertIndex] = (current.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+            verts[vertIndex +1] = (current.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
             vertIndex += 2;
 
             tris[trisIndex] = trisCount + 0;
@@ -109,8 +110,8 @@ public class HoseBuilder : MonoBehaviour {
         }
 
         // Attach the mesh to the last Hose Segment 
-        verts[vertIndex] = current.transform.position + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
-        verts[vertIndex + 1] = current.transform.position + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+        verts[vertIndex] = (current.transform.position ) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+        verts[vertIndex + 1] = (current.transform.position ) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
 
         tris[trisIndex] = trisCount + 0;
         tris[trisIndex + 1] = trisCount + 2;
@@ -126,5 +127,7 @@ public class HoseBuilder : MonoBehaviour {
         mesh.triangles = tris;
 
         mesh.RecalculateNormals();
+        // keeps the mesh visible even when this game object is off the screen
+        mesh.RecalculateBounds();
     }
 }

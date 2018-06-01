@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour {
 	// these are the numbers I need to add by to get the desired end result
 	Vector3 photoGroundOffset = new Vector3(0, 0.15f, -10);
 	float nearZ = -3;
-	float farZ = 10;
+	//float farZ = 10;
 	bool tookPicture = false;
 
 	// this is the desired end result
@@ -279,6 +279,7 @@ public class CameraController : MonoBehaviour {
 
 	IEnumerator TakePicture()
 	{
+        Debug.Log("Took Pic");
 		yield return new WaitForEndOfFrame ();
 
 		//ScreenCapture

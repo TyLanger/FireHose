@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviour {
     bool allFiresOut = false;
 	bool allRescued = false;
 
+    Vector3 minPlayerPos;
+    Vector3 maxPlayerPos;
+
 	// Use this for initialization
 	void Start () {
 		SpawnPlayers ();
@@ -49,7 +52,8 @@ public class GameManager : MonoBehaviour {
 		house.AllVictimsRescued += AllVictimsRescued;
 		house.HouseDestroyedByFire += HouseDestroyedByFire;
 
-
+        minPlayerPos = Vector3.zero;
+        maxPlayerPos = Vector3.zero;
 	}
 	
 	// Update is called once per frame
@@ -109,7 +113,14 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+        // adjust position of camera
 		cameraController.FocusOn (AveragePlayerLocation ());
+        // adjust FOV of camera
+        if (numPlayers > 0)
+        {
+            MinMaxPositions(out minPlayerPos, out maxPlayerPos);
+            cameraController.AdjustFOV(minPlayerPos, maxPlayerPos);
+        }
 	}
 
 	void SpawnPlayers()
@@ -164,6 +175,51 @@ public class GameManager : MonoBehaviour {
 		}
 		return average;
 	}
+
+    void MinMaxPositions(out Vector3 minPosition, out Vector3 maxPosition)
+    {
+
+        float minX = 100;
+        float maxX = -100;
+        float minZ = 100;
+        float maxZ = -100;
+
+        if(numPlayers > 0)
+        {
+            if (p1Joined)
+            {
+                minX = Mathf.Min(player1.transform.position.x, minX);
+                maxX = Mathf.Max(player1.transform.position.x, maxX);
+                minZ = Mathf.Min(player1.transform.position.z, minZ);
+                maxZ = Mathf.Max(player1.transform.position.z, maxZ);
+
+            }
+            if (p2Joined)
+            {
+                minX = Mathf.Min(player2.transform.position.x, minX);
+                maxX = Mathf.Max(player2.transform.position.x, maxX);
+                minZ = Mathf.Min(player2.transform.position.z, minZ);
+                maxZ = Mathf.Max(player2.transform.position.z, maxZ);
+            }
+            if (p3Joined)
+            {
+                minX = Mathf.Min(player3.transform.position.x, minX);
+                maxX = Mathf.Max(player3.transform.position.x, maxX);
+                minZ = Mathf.Min(player3.transform.position.z, minZ);
+                maxZ = Mathf.Max(player3.transform.position.z, maxZ);
+            }
+            if (p4Joined)
+            {
+                minX = Mathf.Min(player4.transform.position.x, minX);
+                maxX = Mathf.Max(player4.transform.position.x, maxX);
+                minZ = Mathf.Min(player4.transform.position.z, minZ);
+                maxZ = Mathf.Max(player4.transform.position.z, maxZ);
+            }
+        }
+
+        minPosition = new Vector3(minX, 0, minZ);
+        maxPosition = new Vector3(maxX, 0, maxZ);
+    }
 
 	void AllFiresPutOut(int firesStarted, int firesPutOut, int blocksDestroyedByFire)
 	{

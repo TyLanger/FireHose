@@ -29,6 +29,8 @@ public class House : MonoBehaviour {
     public int sideBuffers = 3;
     public int topBuffer = 5;
     public int bottomBuffer = 10;
+    public GameObject FoundationPlane;
+    public GameObject GrassPlane;
     public GameObject Wall;
 	public GameObject Floor;
 	public GameObject Door;
@@ -114,6 +116,23 @@ public class House : MonoBehaviour {
 
     }
 
+    void MovePlanes()
+    {
+        // house is at 0.5 in the y. Counteract that
+        FoundationPlane.transform.position = transform.position + new Vector3(xSize * gridSpacing * 0.5f, -0.5f, zSize* gridSpacing * 0.5f);
+        // this is the scaling for planes. They are already ~10x larger than other things
+        FoundationPlane.transform.localScale = new Vector3(xSize, 1, zSize) * 0.1f;
+        // move down 0.01 so it is below foundation
+        GrassPlane.transform.position = transform.position + new Vector3(xSize* gridSpacing * 0.5f, -0.51f, zSize * gridSpacing * 0.5f);
+        //GrassPlane.GetComponent<Renderer>().material.mainTextureScale = new Vector2(20, 20);
+        //GrassPlane.GetComponent<Renderer>().material.mainTexture.
+    }
+
+    void PlaceTools()
+    {
+
+    }
+
     public void CreateNewHouse(float maxDestroyPercent)
 	{
 		// if this percent of blocks destroyed by fire is reached, the house is considered destroyed by fire
@@ -140,6 +159,9 @@ public class House : MonoBehaviour {
 		StartFire ();
 
         BuildBoundaries(BlockParent.transform);
+        MovePlanes();
+
+        PlaceTools();
 	}
 
 	// Places furniture based on an input image

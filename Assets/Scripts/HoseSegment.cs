@@ -29,18 +29,27 @@ public class HoseSegment : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        // TODO new position
-        // if the new position is not too far away, move there
-        // as it is, once the current position is too far away, it will never move again
-        // this way, you could still move laterally and backwards
+        
         Vector3 newPos = Vector3.MoveTowards(transform.position, next.position, moveSpeed * Time.fixedDeltaTime);
         if (Vector3.Distance(newPos, prev.position) <= maxSeparation && Vector3.Distance(newPos, next.position) >= minSeparation)
         {
             // move
             transform.position = newPos;
         }
-        else
+        else if(hoseType != HoseType.End)
         {
+            // TODO
+            // Only do this if the hose is currently moving.
+            // The hose shouldn't constantly be twitching
+            // only when end node can't move?
+            // static isStopped?
+            // from the nozzle backwards, it sends a message somehow until it is no longer stuck?
+            // each segment gets a number when spawned, the lower the number, the less it moves?
+            // moveSpeed = moveSpeed * (currentNum/totalNum)
+            // based on the inverse of the number, wait that many frames before utilizing the averaging
+            // int waitFrames = totalNum - currentNum
+
+
             //Vector3 newPos3 = Vector3.MoveTowards(transform.position, (next.position-prev.position).normalized*(maxSeparation-0.1f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
             //Debug.DrawLine(transform.position, newPos3, Color.blue);
 

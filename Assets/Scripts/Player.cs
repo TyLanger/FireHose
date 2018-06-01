@@ -140,16 +140,6 @@ public class Player : MonoBehaviour {
 				// set lookDirection only if input is not 0
 				lookDirection = moveInput;
 			}
-
-            if(onFire)
-            {
-                if(timeOfNextQuip < Time.time)
-                {
-                    timeOfNextQuip = Time.time + timeBetweenQuips + UnityEngine.Random.Range(0.0f, 2.0f);
-                    SayMessage(onFireMessages[UnityEngine.Random.Range(0, onFireMessages.Length)]);
-                }
-
-            }
 		}
 	}
 
@@ -183,7 +173,7 @@ public class Player : MonoBehaviour {
                             rollStartPos = transform.position;
                             numRollsMade++;
                             Debug.Log("Roll made");
-                            if (numRollsMade == numRollsToDouse)
+                            if (numRollsMade >= numRollsToDouse)
                             {
                                 FirePutOut();
                             }
@@ -210,7 +200,8 @@ public class Player : MonoBehaviour {
                 break;
             case ToolType.Hose:
                 // move away from the water coming out of the hose
-                transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+                //transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, currentTool.GetSpeedMultiplier() * moveSpeed * Time.fixedDeltaTime);
+                transform.position = currentTool.MoveTowards(transform.position, transform.forward, moveInput, moveSpeed * Time.fixedDeltaTime);
                 transform.forward = Vector3.RotateTowards(transform.forward, lookDirection, currentTool.GetTurnMultiplier() * turnSpeed * Time.fixedDeltaTime, 1);
                 break;
             case ToolType.Extinguisher:
@@ -226,9 +217,18 @@ public class Player : MonoBehaviour {
                 break;
         }
 
-        //transform.position = currentTool.MoveTowards (transform.position, lookDirection, moveSpeed * Time.fixedDeltaTime);
-
+        if (onFire)
+        {
+            if (timeOfNextQuip < Time.time)
+            {
+                timeOfNextQuip = Time.time + timeBetweenQuips + UnityEngine.Random.Range(0.0f, 2.0f);
+                SayMessage(onFireMessages[UnityEngine.Random.Range(0, onFireMessages.Length)]);
+            }
+        }
     }
+	
+
+    
 
 	public void Setup(string horName, string vertName, string pickupName, string useName, int playerNum)
 	{

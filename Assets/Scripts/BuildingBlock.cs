@@ -219,10 +219,8 @@ public class BuildingBlock : MonoBehaviour {
 				onFire = true;
 				currentFuelSeconds = 0;
 
-				// temporary to see where the fire is
-				//transform.position = transform.position + new Vector3(0, 0.1f, 0);
-				//transform.FindChild ("Fire").gameObject.SetActive (true);
 				fire.SetActive (true);
+
 				if (SetAlight != null) {
 					SetAlight ();
 				}
@@ -241,9 +239,7 @@ public class BuildingBlock : MonoBehaviour {
 				onFire = false;
 				// after the fire is put out, take double the time to relight
 				currentFuelSeconds = - lightTime;
-				// temporary to visually debug
-				//transform.position = transform.position + new Vector3 (0, -0.25f, 0);
-				//transform.FindChild ("Fire").gameObject.SetActive (false);
+
 				fire.SetActive (false);
 
 				if (FireQuenched != null) {

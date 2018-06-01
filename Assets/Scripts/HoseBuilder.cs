@@ -33,7 +33,7 @@ public class HoseBuilder : MonoBehaviour {
         HoseSegment previous = hoseSegment;
 		HoseSegment copy = hoseSegment;
 		for (int i = 0; i < numSegments; i++) {
-			copy = Instantiate (hoseSegment, transform.position + new Vector3 (i * (minSeparation+0.1f), 0, 0), Quaternion.identity);
+			copy = Instantiate (hoseSegment, transform.position + new Vector3 (i * (minSeparation+0.1f), 0.5f, 0), Quaternion.identity);
 			copy.maxSeparation = this.maxSeparation;
 			copy.minSeparation = this.minSeparation;
 			copy.moveSpeed = this.moveSpeed;

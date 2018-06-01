@@ -17,6 +17,7 @@ public class HoseSegment : MonoBehaviour {
 	public float minSeparation = 0.1f;
 
 	public float moveSpeed = 0.1f;
+    public float aveMoveMultiplier = 10;
 
 	public float force = 200;
 
@@ -28,6 +29,36 @@ public class HoseSegment : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
+        // TODO new position
+        // if the new position is not too far away, move there
+        // as it is, once the current position is too far away, it will never move again
+        // this way, you could still move laterally and backwards
+        Vector3 newPos = Vector3.MoveTowards(transform.position, next.position, moveSpeed * Time.fixedDeltaTime);
+        if (Vector3.Distance(newPos, prev.position) <= maxSeparation && Vector3.Distance(newPos, next.position) >= minSeparation)
+        {
+            // move
+            transform.position = newPos;
+        }
+        else
+        {
+            //Vector3 newPos3 = Vector3.MoveTowards(transform.position, (next.position-prev.position).normalized*(maxSeparation-0.1f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+            //Debug.DrawLine(transform.position, newPos3, Color.blue);
+
+            // if you can't get close to the next in line, check if you can get closer to the next, next in line
+            //Vector3 newPosNext = Vector3.MoveTowards(transform.position, next.GetComponent<HoseSegment>().next.position, moveSpeed * Time.fixedDeltaTime);
+            // if you can't get closer, move towards the center of the prev and next
+            /*
+            Vector3 newPosAve = Vector3.MoveTowards(transform.position, (next.position * 0.5f) + (prev.position * 0.5f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+            Debug.DrawLine(transform.position, newPosAve, Color.blue);
+            if (Vector3.Distance(newPosAve, prev.position) <= maxSeparation && Vector3.Distance(newPosAve, next.position) >= minSeparation)
+            {
+                // move
+                //Debug.Log("Average Move");
+                transform.position = newPosAve;
+            }
+            */
+        }
+        /*
 		switch(hoseType)
 		{
 		case HoseType.Normal:
@@ -71,5 +102,6 @@ public class HoseSegment : MonoBehaviour {
 			}
 			break;
 		}
-	}
+        */
+    }
 }

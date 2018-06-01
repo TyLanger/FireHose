@@ -47,7 +47,7 @@ public class HoseSegment : MonoBehaviour {
             // if you can't get close to the next in line, check if you can get closer to the next, next in line
             //Vector3 newPosNext = Vector3.MoveTowards(transform.position, next.GetComponent<HoseSegment>().next.position, moveSpeed * Time.fixedDeltaTime);
             // if you can't get closer, move towards the center of the prev and next
-            /*
+            
             Vector3 newPosAve = Vector3.MoveTowards(transform.position, (next.position * 0.5f) + (prev.position * 0.5f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
             Debug.DrawLine(transform.position, newPosAve, Color.blue);
             if (Vector3.Distance(newPosAve, prev.position) <= maxSeparation && Vector3.Distance(newPosAve, next.position) >= minSeparation)
@@ -56,7 +56,7 @@ public class HoseSegment : MonoBehaviour {
                 //Debug.Log("Average Move");
                 transform.position = newPosAve;
             }
-            */
+            
         }
         /*
 		switch(hoseType)

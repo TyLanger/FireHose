@@ -161,7 +161,7 @@ public class CameraController : MonoBehaviour {
             //focusPoint += Vector3.down;
             bottomOffset += Vector3.back * 0.1f;
         }
-        if(maxPosition.z > ((transform.position - groundOffset) + CornerPoints[1]).z)
+        if(maxPosition.z > ((transform.position - groundOffset)+ bottomOffset + CornerPoints[1]).z)
         {
             // corner[1] is top left
             // maxPoint is above the screen
@@ -202,7 +202,7 @@ public class CameraController : MonoBehaviour {
                 bottomOffset = Vector3.Lerp(bottomOffset, Vector3.zero, 0.1f);
             }
         }
-        if (maxPosition.z > ((transform.position - groundOffset) + CornerPoints[1]).z)
+        if (maxPosition.z > ((transform.position - groundOffset)+ bottomOffset + CornerPoints[1]).z)
         {
             // still too far out of bounds to shrink back
             shrinkFOV = false;

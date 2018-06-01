@@ -24,7 +24,12 @@ public class House : MonoBehaviour {
 
 	int numRoomsPerSide = 3;
 
-	public GameObject Wall;
+    public GameObject Boundary;
+    // distance to put the boundaries away from the house
+    public int sideBuffers = 3;
+    public int topBuffer = 5;
+    public int bottomBuffer = 10;
+    public GameObject Wall;
 	public GameObject Floor;
 	public GameObject Door;
 	public GameObject Victim;
@@ -88,7 +93,28 @@ public class House : MonoBehaviour {
 		}
 	}
 
-	public void CreateNewHouse(float maxDestroyPercent)
+    void BuildBoundaries(Transform parent)
+    {
+        // build boundaries to the left and right
+        // build them sideBuffer tiles away
+        // center is based on the size of the house and the size of the top and bottom buffers
+        // so the boundaries are all encompassing
+        // for even xSizes, the left boundary is 3, the right is 4; Oh well
+        var leftB = Instantiate(Boundary, transform.position + new Vector3(-sideBuffers * gridSpacing, 0, (zSize+topBuffer-bottomBuffer)/2 * gridSpacing), Quaternion.identity, parent);
+        leftB.transform.localScale = new Vector3(1, 1, zSize + topBuffer + bottomBuffer);
+
+        var rightB = Instantiate(Boundary, transform.position + new Vector3((xSize +sideBuffers) * gridSpacing, 0, (zSize + topBuffer - bottomBuffer) / 2 * gridSpacing), Quaternion.identity, parent);
+        rightB.transform.localScale = new Vector3(1, 1, zSize + topBuffer + bottomBuffer);
+
+        var topB = Instantiate(Boundary, transform.position + new Vector3((xSize) / 2 * gridSpacing, 0, (zSize + topBuffer) * gridSpacing), Quaternion.identity, parent);
+        topB.transform.localScale = new Vector3(xSize + sideBuffers*2, 1, 1);
+
+        var bottomB = Instantiate(Boundary, transform.position + new Vector3((xSize) / 2 * gridSpacing, 0, -bottomBuffer * gridSpacing), Quaternion.identity, parent);
+        bottomB.transform.localScale = new Vector3(xSize + sideBuffers * 2, 1, 1);
+
+    }
+
+    public void CreateNewHouse(float maxDestroyPercent)
 	{
 		// if this percent of blocks destroyed by fire is reached, the house is considered destroyed by fire
 		maxDestructionPercent = maxDestroyPercent;
@@ -112,6 +138,8 @@ public class House : MonoBehaviour {
 		PlaceRandomVictims();
 
 		StartFire ();
+
+        BuildBoundaries(BlockParent.transform);
 	}
 
 	// Places furniture based on an input image

@@ -297,8 +297,12 @@ public class Player : MonoBehaviour {
 							hit.collider.GetComponent<BuildingBlock> ().Break (unarmedBreakStrength);
 						}
 					} else if (hit.collider.tag == "Fire") {
-						// stomp out fire
-						hit.collider.GetComponentInParent<BuildingBlock> ().PutOutFire (unarmedDouseStrength * Time.fixedDeltaTime);
+                        // players also have Fire on them
+                        if (hit.collider.GetComponentInParent<BuildingBlock>() != null)
+                        {
+                            // stomp out fire
+                            hit.collider.GetComponentInParent<BuildingBlock>().PutOutFire(unarmedDouseStrength * Time.fixedDeltaTime);
+                        }
 					}
 				}
 			}

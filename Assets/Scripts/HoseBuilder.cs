@@ -5,9 +5,12 @@ using UnityEngine;
 public class HoseBuilder : MonoBehaviour {
 
 	public Transform nozzle;
+    public float nozzleHeight;
 	public Transform hydrant;
+    public float hydrantHeight;
 
-	public int numSegments = 10;
+
+    public int numSegments = 10;
 
 	public float maxSeparation = 0.4f;
 	public float minSeparation = 0.1f;
@@ -86,11 +89,13 @@ public class HoseBuilder : MonoBehaviour {
     void UpdateMesh()
     {
         // each segment has 2 vertices
-        Vector3[] verts = new Vector3[numSegments * 2];
+        // Plus 1 for the nozzle
+        Vector3[] verts = new Vector3[(numSegments+1) * 2];
         // Each segment has 2 triangles towards the next segment
         // except the first one.
         // Each triangle has 3 points
-        int[] tris = new int[(numSegments - 1) * 6];
+        // Plus 1 for the nozzle
+        int[] tris = new int[(numSegments+1 - 1) * 6];
 
         
 
@@ -101,16 +106,25 @@ public class HoseBuilder : MonoBehaviour {
         Vector3 previousPos;
         Vector3 direction = (current.transform.position - first.transform.position);
 
-        verts[0] = (first.transform.position ) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
-        verts[1] = (first.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+        verts[0] = (first.transform.position ) + Vector3.up * hydrantHeight + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+        verts[1] = (first.transform.position) + Vector3.up * hydrantHeight + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
 
         int vertIndex = 2;
 
 
         while (current.hoseType != HoseSegment.HoseType.End)
         {
-            verts[vertIndex] = (current.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
-            verts[vertIndex +1] = (current.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+            if (vertIndex == 2 || vertIndex == 4)
+            {
+                // make the verts near the hydrant higher
+                verts[vertIndex] = (current.transform.position) + Vector3.up * hydrantHeight/vertIndex + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+                verts[vertIndex + 1] = (current.transform.position) + Vector3.up * hydrantHeight/vertIndex + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+            }
+            else
+            {
+                verts[vertIndex] = (current.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+                verts[vertIndex + 1] = (current.transform.position) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+            }
             vertIndex += 2;
 
             tris[trisIndex] = trisCount + 0;
@@ -132,8 +146,9 @@ public class HoseBuilder : MonoBehaviour {
         }
 
         // Attach the mesh to the last Hose Segment 
-        verts[vertIndex] = (current.transform.position ) + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
-        verts[vertIndex + 1] = (current.transform.position ) + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+        verts[vertIndex] = (current.transform.position) + Vector3.up * nozzleHeight*0.5f + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+        verts[vertIndex + 1] = (current.transform.position ) + Vector3.up * nozzleHeight*0.5f + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+        vertIndex += 2;
 
         tris[trisIndex] = trisCount + 0;
         tris[trisIndex + 1] = trisCount + 2;
@@ -143,7 +158,19 @@ public class HoseBuilder : MonoBehaviour {
         tris[trisIndex + 4] = trisCount + 2;
         tris[trisIndex + 5] = trisCount + 3;
 
+        trisCount += 2;
+        trisIndex += 6;
 
+        verts[vertIndex] = nozzle.position + Vector3.up * nozzleHeight + new Vector3(-direction.z, 0, direction.x).normalized * hoseWidth;
+        verts[vertIndex + 1] = nozzle.position + Vector3.up * nozzleHeight + new Vector3(-direction.z, 0, direction.x).normalized * -hoseWidth;
+
+        tris[trisIndex] = trisCount + 0;
+        tris[trisIndex + 1] = trisCount + 2;
+        tris[trisIndex + 2] = trisCount + 1;
+
+        tris[trisIndex + 3] = trisCount + 1;
+        tris[trisIndex + 4] = trisCount + 2;
+        tris[trisIndex + 5] = trisCount + 3;
 
         mesh.vertices = verts;
         mesh.triangles = tris;

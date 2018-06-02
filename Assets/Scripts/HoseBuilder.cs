@@ -32,8 +32,24 @@ public class HoseBuilder : MonoBehaviour {
 
         HoseSegment previous = hoseSegment;
 		HoseSegment copy = hoseSegment;
+        bool top = true;
+        Vector3 position = Vector3.zero;
 		for (int i = 0; i < numSegments; i++) {
-			copy = Instantiate (hoseSegment, transform.position + new Vector3 (i * (minSeparation+0.1f), 0.01f, 0), Quaternion.identity);
+
+            if(i%3==0)
+            {
+                top = !top;
+            }
+            if(top)
+            {
+                position = new Vector3((i + 1) * (minSeparation - 0.1f), 0.05f, 0.5f);
+            }
+            else
+            {
+                position = new Vector3((i + 1) * (minSeparation - 0.1f), 0.05f, 0);
+            }
+            // new Vector3 ((i+1) * (minSeparation+0.1f), 0.05f, 0)
+            copy = Instantiate (hoseSegment, hydrant.position + position, Quaternion.identity);
 			copy.maxSeparation = this.maxSeparation;
 			copy.minSeparation = this.minSeparation;
 			copy.moveSpeed = this.moveSpeed;
@@ -57,7 +73,7 @@ public class HoseBuilder : MonoBehaviour {
 		copy.next = nozzle;
         // Nozzle is larger than segments; give it more space
         copy.minSeparation *= 2;
-        
+        nozzle.parent.transform.position = copy.transform.position + new Vector3((minSeparation + 0.1f) * 2, 0.6f, 0);
 	}
 	
 	// Update is called once per frame

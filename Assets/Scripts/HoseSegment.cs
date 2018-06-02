@@ -25,7 +25,7 @@ public class HoseSegment : MonoBehaviour {
     public int totalSegments;
 
     static int numberCanMove = 0;
-    //public int debugInt;
+    public int debugInt;
 
 	// Use this for initialization
 	void Start () {
@@ -35,49 +35,57 @@ public class HoseSegment : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        //debugInt = numberCanMove;
+        debugInt = numberCanMove;
 
         Vector3 newPos = Vector3.MoveTowards(transform.position, next.position, moveSpeed * Time.fixedDeltaTime);
-        if (Vector3.Distance(newPos, prev.position) <= maxSeparation)
+        if (Vector3.Distance(newPos, prev.position) <= maxSeparation && (Vector3.Distance(newPos, next.position) >= minSeparation))
         {
-            if (Vector3.Distance(newPos, next.position) >= minSeparation)
-            {
-                // move
-                transform.position = newPos;
-                if (numberCanMove > 0)
-                {
-                    numberCanMove--;
-                }
-            }
+
+            // move
+            transform.position = newPos;
+
+
         }
         else
         {
-            
+
             // only move to the average position if the segments ahead of you have
-            if (numberCanMove >= (totalSegments-segmentNumber))
+            /*
+            if (numberCanMove >= (totalSegments - segmentNumber))
             {
                 if (numberCanMove < totalSegments)
                 {
-                    numberCanMove++;
+                    //numberCanMove++;
+                    numberCanMove += 1 + 10 * (segmentNumber / totalSegments);
                 }
-                
-                //Vector3 newPos3 = Vector3.MoveTowards(transform.position, (next.position-prev.position).normalized*(maxSeparation-0.1f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
-                //Debug.DrawLine(transform.position, newPos3, Color.blue);
+            }*/
 
-                // if you can't get close to the next in line, check if you can get closer to the next, next in line
-                //Vector3 newPosNext = Vector3.MoveTowards(transform.position, next.GetComponent<HoseSegment>().next.position, moveSpeed * Time.fixedDeltaTime);
-                // if you can't get closer, move towards the center of the prev and next
+            //Vector3 newPos3 = Vector3.MoveTowards(transform.position, (next.position-prev.position).normalized*(maxSeparation-0.1f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+            //Debug.DrawLine(transform.position, newPos3, Color.blue);
 
-                Vector3 newPosAve = Vector3.MoveTowards(transform.position, (next.position * 0.5f) + (prev.position * 0.5f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
-                Debug.DrawLine(transform.position, newPosAve, Color.blue);
-                if (Vector3.Distance(newPosAve, prev.position) <= maxSeparation && Vector3.Distance(newPosAve, next.position) >= minSeparation)
-                {
-                    // move
-                    //Debug.Log("Average Move");
-                    transform.position = newPosAve;
-                }
+            // if you can't get close to the next in line, check if you can get closer to the next, next in line
+            //Vector3 newPosNext = Vector3.MoveTowards(transform.position, next.GetComponent<HoseSegment>().next.position, moveSpeed * Time.fixedDeltaTime);
+            // if you can't get closer, move towards the center of the prev and next
+            //((float)(segmentNumber+20) / (float)totalSegments) *
+            Vector3 newPosAve = Vector3.MoveTowards(transform.position, (next.position * 0.5f) + (prev.position * 0.5f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+            Debug.DrawLine(transform.position, newPosAve, Color.blue);
+            if (Vector3.Distance(newPosAve, prev.position) <= maxSeparation && Vector3.Distance(newPosAve, next.position) >= minSeparation)
+            {
+                // move
+                //Debug.Log("Average Move");
+                transform.position = newPosAve;
             }
-            
+
+
+        }
+
+        if(hoseType == HoseType.End)
+        {
+            // part attached to the nozzle
+            if (Vector3.Distance(transform.position, next.position) > maxSeparation)
+            {
+                next.GetComponentInParent<Rigidbody>().AddForce((transform.position - next.position) * force);
+            }
         }
         /*
 		switch(hoseType)

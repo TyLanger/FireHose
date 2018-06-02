@@ -37,6 +37,9 @@ public class HoseBuilder : MonoBehaviour {
 			copy.maxSeparation = this.maxSeparation;
 			copy.minSeparation = this.minSeparation;
 			copy.moveSpeed = this.moveSpeed;
+            // keep track of where in the line a segment is
+            copy.segmentNumber = i+1;
+            copy.totalSegments = numSegments;
 			if (i == 0) {
 				// first in list
 				previous = copy;
@@ -52,6 +55,9 @@ public class HoseBuilder : MonoBehaviour {
 		}
 		copy.hoseType = HoseSegment.HoseType.End;
 		copy.next = nozzle;
+        // Nozzle is larger than segments; give it more space
+        copy.minSeparation *= 2;
+        
 	}
 	
 	// Update is called once per frame

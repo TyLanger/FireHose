@@ -21,6 +21,12 @@ public class HoseSegment : MonoBehaviour {
 
 	public float force = 200;
 
+    public int segmentNumber;
+    public int totalSegments;
+
+    static int numberCanMove = 0;
+    //public int debugInt;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -29,41 +35,47 @@ public class HoseSegment : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        
+        //debugInt = numberCanMove;
+
         Vector3 newPos = Vector3.MoveTowards(transform.position, next.position, moveSpeed * Time.fixedDeltaTime);
-        if (Vector3.Distance(newPos, prev.position) <= maxSeparation && Vector3.Distance(newPos, next.position) >= minSeparation)
+        if (Vector3.Distance(newPos, prev.position) <= maxSeparation)
         {
-            // move
-            transform.position = newPos;
-        }
-        else if(hoseType != HoseType.End)
-        {
-            // TODO
-            // Only do this if the hose is currently moving.
-            // The hose shouldn't constantly be twitching
-            // only when end node can't move?
-            // static isStopped?
-            // from the nozzle backwards, it sends a message somehow until it is no longer stuck?
-            // each segment gets a number when spawned, the lower the number, the less it moves?
-            // moveSpeed = moveSpeed * (currentNum/totalNum)
-            // based on the inverse of the number, wait that many frames before utilizing the averaging
-            // int waitFrames = totalNum - currentNum
-
-
-            //Vector3 newPos3 = Vector3.MoveTowards(transform.position, (next.position-prev.position).normalized*(maxSeparation-0.1f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
-            //Debug.DrawLine(transform.position, newPos3, Color.blue);
-
-            // if you can't get close to the next in line, check if you can get closer to the next, next in line
-            //Vector3 newPosNext = Vector3.MoveTowards(transform.position, next.GetComponent<HoseSegment>().next.position, moveSpeed * Time.fixedDeltaTime);
-            // if you can't get closer, move towards the center of the prev and next
-            
-            Vector3 newPosAve = Vector3.MoveTowards(transform.position, (next.position * 0.5f) + (prev.position * 0.5f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
-            Debug.DrawLine(transform.position, newPosAve, Color.blue);
-            if (Vector3.Distance(newPosAve, prev.position) <= maxSeparation && Vector3.Distance(newPosAve, next.position) >= minSeparation)
+            if (Vector3.Distance(newPos, next.position) >= minSeparation)
             {
                 // move
-                //Debug.Log("Average Move");
-                transform.position = newPosAve;
+                transform.position = newPos;
+                if (numberCanMove > 0)
+                {
+                    numberCanMove--;
+                }
+            }
+        }
+        else
+        {
+            
+            // only move to the average position if the segments ahead of you have
+            if (numberCanMove >= (totalSegments-segmentNumber))
+            {
+                if (numberCanMove < totalSegments)
+                {
+                    numberCanMove++;
+                }
+                
+                //Vector3 newPos3 = Vector3.MoveTowards(transform.position, (next.position-prev.position).normalized*(maxSeparation-0.1f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+                //Debug.DrawLine(transform.position, newPos3, Color.blue);
+
+                // if you can't get close to the next in line, check if you can get closer to the next, next in line
+                //Vector3 newPosNext = Vector3.MoveTowards(transform.position, next.GetComponent<HoseSegment>().next.position, moveSpeed * Time.fixedDeltaTime);
+                // if you can't get closer, move towards the center of the prev and next
+
+                Vector3 newPosAve = Vector3.MoveTowards(transform.position, (next.position * 0.5f) + (prev.position * 0.5f), aveMoveMultiplier * moveSpeed * Time.fixedDeltaTime);
+                Debug.DrawLine(transform.position, newPosAve, Color.blue);
+                if (Vector3.Distance(newPosAve, prev.position) <= maxSeparation && Vector3.Distance(newPosAve, next.position) >= minSeparation)
+                {
+                    // move
+                    //Debug.Log("Average Move");
+                    transform.position = newPosAve;
+                }
             }
             
         }

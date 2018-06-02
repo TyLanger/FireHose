@@ -20,6 +20,8 @@ public class HoseBuilder : MonoBehaviour {
 	public HoseSegment hoseSegment;
 
     HoseSegment first;
+    HoseSegment last;
+
 
     // Mesh
     Mesh mesh;
@@ -72,11 +74,15 @@ public class HoseBuilder : MonoBehaviour {
 			}
 
 		}
+        last = copy;
 		copy.hoseType = HoseSegment.HoseType.End;
 		copy.next = nozzle;
         // Nozzle is larger than segments; give it more space
         copy.minSeparation *= 2;
         nozzle.parent.transform.position = copy.transform.position + new Vector3((minSeparation + 0.1f) * 2, 0.6f, 0);
+
+
+        FindObjectOfType<GameManager>().GameOver += DetachNozzle;
 	}
 	
 	// Update is called once per frame
@@ -84,6 +90,19 @@ public class HoseBuilder : MonoBehaviour {
         transform.rotation = Quaternion.identity;
         UpdateMesh();
         
+    }
+
+    void DetachNozzle()
+    {
+        // when the players get teleprted, if one has the nozzle, it causes problems
+        // let them keep the nozzle, but remove the hose
+        // The hose stays where it is with this fake transform for it to point to
+        GameObject fakeTrans = new GameObject("Fake");
+        fakeTrans.transform.position = nozzle.position;
+        // change nozzle to fake to stop drawing the mesh to the real nozzle
+        nozzle = fakeTrans.transform;
+        // change first.next to fake to stop the segements pulling the player
+        last.GetComponent<HoseSegment>().next = fakeTrans.transform;
     }
 
     void UpdateMesh()

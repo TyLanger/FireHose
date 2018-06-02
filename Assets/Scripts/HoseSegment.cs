@@ -84,7 +84,10 @@ public class HoseSegment : MonoBehaviour {
             // part attached to the nozzle
             if (Vector3.Distance(transform.position, next.position) > maxSeparation)
             {
-                next.GetComponentInParent<Rigidbody>().AddForce((transform.position - next.position) * force);
+                if (next.GetComponentInParent<Rigidbody>() != null)
+                {
+                    next.GetComponentInParent<Rigidbody>().AddForce((transform.position - next.position) * force);
+                }
             }
         }
         /*

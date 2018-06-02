@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class GameManager : MonoBehaviour {
 
@@ -45,8 +46,10 @@ public class GameManager : MonoBehaviour {
     Vector3 minPlayerPos;
     Vector3 maxPlayerPos;
 
-	// Use this for initialization
-	void Start () {
+    public event Action GameOver;
+
+    // Use this for initialization
+    void Start () {
 		SpawnPlayers ();
 		house.AllFiresPutOut += AllFiresPutOut;
 		house.AllVictimsRescued += AllVictimsRescued;
@@ -65,7 +68,9 @@ public class GameManager : MonoBehaviour {
 		}
         */
 		if (Input.GetButtonDown ("Fire3")) {
-			TeleportPlayers ();
+            //TeleportPlayers ();
+            GameWon();
+            //Debug.Break();
 		}
 
 		// Joysticks are in the order they were plugged in
@@ -287,11 +292,19 @@ public class GameManager : MonoBehaviour {
 	void GameWon()
 	{
 		Debug.Log ("Game Won");
+        if(GameOver != null)
+        {
+            GameOver();
+        }
 		TeleportPlayers ();
 	}
 
 	void HouseDestroyedByFire(int blocksDestroyed, int totalBlocks)
 	{
+        if(GameOver != null)
+        {
+            GameOver();
+        }
 		Debug.Log ("Game Lost");
 		TeleportPlayers ();
 

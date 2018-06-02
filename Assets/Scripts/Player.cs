@@ -114,15 +114,18 @@ public class Player : MonoBehaviour {
 	void Update () {
 		if (canMove) {
 			if (Input.GetButtonDown (pickupInput)) {
-				// left click
-				// A button on snes controller
-				//Debug.Log ("Fire1");
-				PickUp ();
+                // left click
+                // A button on snes controller
+                //Debug.Log ("Fire1");
+                //Debug.Log("Pick: " + playerNumber + " " + pickupInput);
+
+                PickUp();
 			}
 			if (Input.GetButtonDown (useInput)) {
-				// right click
-				// B button on snes controller
-				//Debug.Log ("Fire2");
+                // right click
+                // B button on snes controller
+                //Debug.Log ("Fire2");
+                //Debug.Log("Use: "+playerNumber+" "+useInput);
 				UseTool ();
 			}
 			if (Input.GetButtonUp (useInput)) {

@@ -364,6 +364,8 @@ public class Player : MonoBehaviour {
 				// pick up object in front of you
 				RaycastHit hit;
 				Debug.DrawRay (transform.position + pickupPosition, transform.forward, Color.green);
+                // this might work
+                Debug.DrawRay(transform.position + pickupPosition, transform.forward + new Vector3(Mathf.Cos(transform.rotation.eulerAngles.y)*0.5f, 0, Mathf.Sin(transform.rotation.eulerAngles.y)*0.5f), Color.black);
 				if (Physics.Raycast (transform.position + pickupPosition, transform.forward, out hit, 2, LayerMask.GetMask ("Tool"))) {
 					//Debug.Log ("Hit something");
 					if (hit.collider.GetComponentInChildren<Tool> () != null) {
@@ -385,7 +387,60 @@ public class Player : MonoBehaviour {
 						}
 					}
 				}
-			}
+                else if(Physics.Raycast(transform.position + pickupPosition, transform.forward + new Vector3(Mathf.Cos(transform.rotation.eulerAngles.y) * 0.5f, 0, Mathf.Sin(transform.rotation.eulerAngles.y) * 0.5f), out hit, 2, LayerMask.GetMask("Tool")))
+                {
+                    // fire to the right of forward
+                    if (hit.collider.GetComponentInChildren<Tool>() != null)
+                    {
+                        // hit a tool
+                        if (hit.collider.GetComponentInChildren<Tool>().CanPickup())
+                        {
+                            //Debug.Log("Hit Right");
+                            currentTool = hit.collider.GetComponentInChildren<Tool>();
+
+                            // set up Forced movement before you call tool.pickup()
+                            // this is for the people you have to carry that slow you down
+                            // get an action that tells the player when to start getting moved by the object
+                            currentTool.ForcedMovement -= ToolStarted;
+                            currentTool.ForcedMovement += ToolStarted;
+                            // get an action to tell the player when it can go back to regular movement
+                            currentTool.ToolFinishedAction -= ToolFinished;
+                            currentTool.ToolFinishedAction += ToolFinished;
+
+                            currentTool.PickUp(hand);
+                            holdingTool = true;
+                        }
+                    }
+                }
+                else if (Physics.Raycast(transform.position + pickupPosition, transform.forward + new Vector3(Mathf.Cos(transform.rotation.eulerAngles.y) * -0.5f, 0, Mathf.Sin(transform.rotation.eulerAngles.y) * -0.5f), out hit, 2, LayerMask.GetMask("Tool")))
+                {
+                    // fire to the left of forward
+                    if (hit.collider.GetComponentInChildren<Tool>() != null)
+                    {
+                        // hit a tool
+                        if (hit.collider.GetComponentInChildren<Tool>().CanPickup())
+                        {
+                            //Debug.Log("Hit Left");
+
+                            currentTool = hit.collider.GetComponentInChildren<Tool>();
+
+                            // set up Forced movement before you call tool.pickup()
+                            // this is for the people you have to carry that slow you down
+                            // get an action that tells the player when to start getting moved by the object
+                            currentTool.ForcedMovement -= ToolStarted;
+                            currentTool.ForcedMovement += ToolStarted;
+                            // get an action to tell the player when it can go back to regular movement
+                            currentTool.ToolFinishedAction -= ToolFinished;
+                            currentTool.ToolFinishedAction += ToolFinished;
+
+                            currentTool.PickUp(hand);
+                            holdingTool = true;
+                        }
+                    }
+                }
+                // forward + Vector3.Down * 0.5f // ~22.5 degrees down
+                // forward + Mathf.Cos(rotation.y), 0, Mathf.Sin(rotation.y)
+            }
 		}
 	}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class Menu : MonoBehaviour
 {
 
@@ -31,6 +32,7 @@ public class Menu : MonoBehaviour
     public Texture2D screenshotTex;
     public GameObject photoObject;
 
+
     // Use this for initialization
     void Start()
     {
@@ -48,6 +50,8 @@ public class Menu : MonoBehaviour
                 {
                     p1Joined = true;
                     player1.GetComponent<Player>().SetShirtColour(Color.red);
+                    
+                    
                 }
             }
             if (p1Joined)

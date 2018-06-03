@@ -32,11 +32,37 @@ public class Menu : MonoBehaviour
     public Texture2D screenshotTex;
     public GameObject photoObject;
 
+    static bool alreadySpawned = false;
+    public static Menu originalMenu;
 
     // Use this for initialization
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+        if(alreadySpawned)
+        {
+            // don't spawn 2 menus
+
+            // reset things in the original
+            originalMenu.player1 = this.player1;
+            originalMenu.player2 = this.player2;
+            originalMenu.player3 = this.player3;
+            originalMenu.player4 = this.player4;
+
+            originalMenu.p1Joined = false;
+            originalMenu.p2Joined = false;
+            originalMenu.p3Joined = false;
+            originalMenu.p4Joined = false;
+
+            originalMenu.menuAnim = true;
+
+            Destroy(gameObject);
+        }
+        else
+        {
+            alreadySpawned = true;
+            originalMenu = this;
+        }
     }
 
     // Update is called once per frame
@@ -125,8 +151,10 @@ public class Menu : MonoBehaviour
 
     void ApplyTexture()
     {
-
-        Sprite tempSprite = Sprite.Create(screenshotTex, new Rect(0, 0, screenshotTex.width, screenshotTex.height), new Vector2(0, 0));
-        FindObjectOfType<SpriteRenderer>().sprite = tempSprite;
+        if (screenshotTex != null)
+        {
+            Sprite tempSprite = Sprite.Create(screenshotTex, new Rect(0, 0, screenshotTex.width, screenshotTex.height), new Vector2(0, 0));
+            FindObjectOfType<SpriteRenderer>().sprite = tempSprite;
+        }
     }
 }

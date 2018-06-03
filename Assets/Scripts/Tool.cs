@@ -26,9 +26,13 @@ public class Tool : MonoBehaviour {
 	public event Action ToolFinishedAction;
 	public event Action ForcedMovement;
 
+    protected AudioSource[] audioSources;
+    // only 1 clip per source atm
+    public AudioClip[] clips;
+    public int numSoundEffects;
 
-	// Use this for initialization
-	protected virtual void Start () {
+    // Use this for initialization
+    protected virtual void Start () {
 		//pickupCollider = GetComponent<SphereCollider> ();
 		pickupCollider = GetComponentInParent<SphereCollider> ();
 		physicsObject = GetComponentInParent<Rigidbody> ().gameObject;
@@ -38,6 +42,17 @@ public class Tool : MonoBehaviour {
 	void FixedUpdate () {
 		//transform.position = parentPos + offset; 
 	}
+
+    protected virtual void AddAudioSources(int number)
+    {
+        audioSources = new AudioSource[number];
+        for (int i = 0; i < number; i++)
+        {
+            // The documentation has the as AudioSource. Seems a little redundant
+            audioSources[i] = gameObject.AddComponent<AudioSource>() as AudioSource;
+            audioSources[i].playOnAwake = false;
+        }
+    }
 
 	public bool CanPickup()
 	{

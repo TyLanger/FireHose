@@ -27,25 +27,116 @@ public class Extinguisher : Tool {
 
 	public ParticleSystem particles;
 
-	protected override void Start()
+    public AudioClip startSprayClip;
+    public AudioClip maxSprayClip;
+    public AudioClip endSprayClip;
+    int startIndex = 0;
+    int maxIndex = 1;
+    int endIndex = 2;
+
+    float startVolume = 0.7f;
+    float maxVolume = 0.5f;
+    float endVolume = 0.5f;
+    float startPitch = 1;
+    float maxPitch = 1;
+    float endPitch = 1;
+
+    float endTime = 1.5f;
+
+
+    protected override void Start()
 	{
 		base.Start ();	
 		currentFuelSeconds = fuelSeconds;
-		//particles = GetComponent<ParticleSystem> ();
-	}
+        //particles = GetComponent<ParticleSystem> ();
+        AddAudioSources(3);
 
-	IEnumerator Spray()
+        audioSources[startIndex].clip = startSprayClip;
+        audioSources[maxIndex].clip = maxSprayClip;
+        //audioSources[maxIndex+1].clip = maxSprayClip;
+        audioSources[endIndex].clip = endSprayClip;
+
+        audioSources[startIndex].pitch = startPitch;
+        audioSources[startIndex].volume = startVolume;
+
+        audioSources[maxIndex].pitch = maxPitch;
+        audioSources[maxIndex].volume = maxVolume;
+        audioSources[maxIndex].loop = true;
+        //audioSources[maxIndex+1].pitch = maxPitch;
+        //audioSources[maxIndex+1].volume = maxVolume;
+        //audioSources[maxIndex+1].loop = true;
+
+        audioSources[endIndex].pitch = endPitch;
+        audioSources[endIndex].volume = endVolume;
+    }
+
+    void MixSpraySound(float sprayPercent)
+    {
+        // as the spray gets stronger, fade out the volume
+        audioSources[startIndex].volume = Mathf.Lerp(startVolume, 0, sprayPercent);
+        // fade in the maxSpray sound
+        audioSources[maxIndex].volume = Mathf.Lerp(0, maxVolume, sprayPercent);
+        //audioSources[maxIndex+1].volume = Mathf.Lerp(0, maxVolume, sprayPercent);
+    }
+
+    IEnumerator FadeSprayOut(float fadeTime)
+    {
+        if (audioSources[startIndex].isPlaying)
+        {
+            audioSources[startIndex].Stop();
+        }
+        float originalFadeTime = fadeTime;
+        audioSources[endIndex].Play();
+        // check if it has started spraying again before this ended
+        while (fadeTime > 0 && !spraying)
+        {
+            fadeTime -= Time.fixedDeltaTime;
+            if (audioSources[maxIndex].volume > 0)
+            {
+                audioSources[maxIndex].volume -= Time.fixedDeltaTime;
+            }
+            /*
+            if (audioSources[maxIndex+1].volume > 0)
+            {
+                audioSources[maxIndex+1].volume -= Time.fixedDeltaTime;
+            }*/
+            if (audioSources[endIndex].volume > 0)
+            {
+                audioSources[endIndex].volume -= Time.fixedDeltaTime;
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+        if (!spraying)
+        {
+            // may have already started again
+            audioSources[maxIndex].Stop();
+        }
+        //audioSources[maxIndex+1].Stop();
+
+    }
+
+    IEnumerator Spray()
 	{
 		spraying = true;
 		ForcedMovementStarted ();
 
-		timeStartedSpraying = Time.time;
+        //StopCoroutine(FadeSprayOut());
+        audioSources[startIndex].Play();
+        audioSources[maxIndex].Play();
+        //Invoke("PlaySecondSpraySound", audioSources[maxIndex].clip.length * 0.5f);
+
+        timeStartedSpraying = Time.time;
 		// constantly spawn foam particles
 		while (currentFuelSeconds > 0) {
 			if (Time.time - timeStartedSpraying <= timeToFullSpray) {
 				// increase spray slowly
 				currentFuelRate = Mathf.Lerp(minFuelRate, maxFuelRate, (Time.time - timeStartedSpraying) / timeToFullSpray);
-			}
+                // only need to mix while the spray is amping up
+                MixSpraySound(currentFuelRate / maxFuelRate);
+            }
+
+           
 
 			if (!particles.isEmitting) {
 				particles.Play ();
@@ -93,6 +184,8 @@ public class Extinguisher : Tool {
 			currentFuelSeconds -= currentFuelRate * Time.fixedDeltaTime;
 			yield return new WaitForFixedUpdate ();
 		}
+
+        
 		// ran out of fuel
 		spraying = false;
 		OutOfFuel ();
@@ -111,6 +204,7 @@ public class Extinguisher : Tool {
 
 	void OutOfFuel()
 	{
+        StartCoroutine(FadeSprayOut(endTime));
 		ToolFinished ();
 		particles.Stop ();
 	}
@@ -130,7 +224,8 @@ public class Extinguisher : Tool {
 		if (spraying) {
 			spraying = false;
 			StopCoroutine ("Spray");
-			ToolFinished ();
+            StartCoroutine(FadeSprayOut(endTime));
+            ToolFinished();
 			particles.Stop ();
 		}
 		// recharges slowly when not in use

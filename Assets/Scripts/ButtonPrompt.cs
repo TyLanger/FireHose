@@ -39,7 +39,10 @@ public class ButtonPrompt : MonoBehaviour {
 
     void SetVisible(bool isVisible)
     {
-        spriteRenderer.enabled = isVisible;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = isVisible;
+        }
     }
 
     void OnTriggerEnter(Collider col)

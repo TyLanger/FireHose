@@ -18,10 +18,10 @@ public class GameManager : MonoBehaviour {
 	Player player4;
 
 	// default spawn points
-	Vector3 p1Spawn = new Vector3(9, 1.5f, 0);
-	Vector3 p2Spawn = new Vector3(11, 1.5f, 0);
-	Vector3 p3Spawn = new Vector3(9, 1.5f, -2);
-	Vector3 p4Spawn = new Vector3(11, 1.5f, -2);
+	Vector3 p1Spawn = new Vector3(11, 1.5f, 0);
+	Vector3 p2Spawn = new Vector3(13, 1.5f, 0);
+	Vector3 p3Spawn = new Vector3(11, 1.5f, -2);
+	Vector3 p4Spawn = new Vector3(13, 1.5f, -2);
 
 	bool p1Joined = false;
 	bool p2Joined = false;
@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+
 		SpawnPlayers ();
 		house.AllFiresPutOut += AllFiresPutOut;
 		house.AllVictimsRescued += AllVictimsRescued;
@@ -57,10 +58,13 @@ public class GameManager : MonoBehaviour {
 
         minPlayerPos = Vector3.zero;
         maxPlayerPos = Vector3.zero;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
+        StartHouse(FindObjectOfType<Menu>().houseHumber);
+
+    }
+
+    // Update is called once per frame
+    void Update () {
 
         /* Use the UI buttons
 		if (Input.GetButtonDown ("Jump")) {
@@ -309,4 +313,11 @@ public class GameManager : MonoBehaviour {
 		TeleportPlayers ();
 
 	}
+
+    public void GoToMenu()
+    {
+        // the button calls this
+        // the menu doesn't exist in the scene until the menu scene is run
+        FindObjectOfType<Menu>().LoadMenu();
+    }
 }

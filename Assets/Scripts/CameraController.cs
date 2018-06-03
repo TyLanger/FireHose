@@ -287,7 +287,10 @@ public class CameraController : MonoBehaviour {
 		screenImage.ReadPixels (new Rect (0, 0, Screen.width, Screen.height), 0, 0);
 		screenImage.Apply ();
 
+        FindObjectOfType<Menu>().SetScreenShot(screenImage);
+
 		byte[] imageBytes = screenImage.EncodeToPNG ();
 		System.IO.File.WriteAllBytes ("Screenshots/Screenshot.png", imageBytes);
+        
 	}
 }

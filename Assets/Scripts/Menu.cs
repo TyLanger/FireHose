@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
@@ -24,6 +25,12 @@ public class Menu : MonoBehaviour
 
     float moveSpeed = 6;
 
+    bool menuAnim = true;
+    public int houseHumber = 1;
+
+    public Texture2D screenshotTex;
+    public GameObject photoObject;
+
     // Use this for initialization
     void Start()
     {
@@ -33,61 +40,89 @@ public class Menu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (!p1Joined)
+        if (menuAnim)
         {
-            if (Input.GetButtonDown("Pickup_P1"))
+            if (!p1Joined)
             {
-                p1Joined = true;
-                player1.GetComponent<Player>().SetShirtColour(Color.red);
+                if (Input.GetButtonDown("Pickup_P1"))
+                {
+                    p1Joined = true;
+                    player1.GetComponent<Player>().SetShirtColour(Color.red);
+                }
+            }
+            if (p1Joined)
+            {
+                player1.transform.position = Vector3.MoveTowards(player1.transform.position, p1Pos, moveSpeed * Time.deltaTime);
+            }
+
+            if (!p2Joined)
+            {
+                if (Input.GetButtonDown("Pickup_P2"))
+                {
+                    p2Joined = true;
+                    player2.GetComponent<Player>().SetShirtColour(Color.blue);
+
+                }
+            }
+            if (p2Joined)
+            {
+                player2.transform.position = Vector3.MoveTowards(player2.transform.position, p2Pos, moveSpeed * Time.deltaTime);
+            }
+
+            if (!p3Joined)
+            {
+                if (Input.GetButtonDown("Pickup_P3"))
+                {
+                    Debug.Log("P3");
+                    p3Joined = true;
+                    player3.GetComponent<Player>().SetShirtColour(Color.green);
+
+                }
+            }
+            if (p3Joined)
+            {
+                player3.transform.position = Vector3.MoveTowards(player3.transform.position, p3Pos, moveSpeed * Time.deltaTime);
+            }
+
+            if (!p4Joined)
+            {
+                if (Input.GetButtonDown("Pickup_P4"))
+                {
+                    p4Joined = true;
+                    player4.GetComponent<Player>().SetShirtColour(Color.yellow);
+
+                }
+            }
+            if (p4Joined)
+            {
+                player4.transform.position = Vector3.MoveTowards(player4.transform.position, p4Pos, moveSpeed * Time.deltaTime);
             }
         }
-        if (p1Joined)
-        {
-            player1.transform.position = Vector3.MoveTowards(player1.transform.position, p1Pos, moveSpeed * Time.deltaTime);
-        }
+    }
 
-        if (!p2Joined)
-        {
-            if (Input.GetButtonDown("Pickup_P2"))
-            {
-                p2Joined = true;
-                player2.GetComponent<Player>().SetShirtColour(Color.blue);
+    public void StartGame(int houseNum)
+    {
+        menuAnim = false;
+        houseHumber = houseNum;
+        SceneManager.LoadScene("Building");
+    }
 
-            }
-        }
-        if (p2Joined)
-        {
-            player2.transform.position = Vector3.MoveTowards(player2.transform.position, p2Pos, moveSpeed * Time.deltaTime);
-        }
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene("Menu");
+        Invoke("ApplyTexture", 2);
+    }
 
-        if (!p3Joined)
-        {
-            if (Input.GetButtonDown("Pickup_P3"))
-            {
-                Debug.Log("P3");
-                p3Joined = true;
-                player3.GetComponent<Player>().SetShirtColour(Color.green);
+    public void SetScreenShot(Texture2D image)
+    {
+        screenshotTex = image;
+        
+    }
 
-            }
-        }
-        if (p3Joined)
-        {
-            player3.transform.position = Vector3.MoveTowards(player3.transform.position, p3Pos, moveSpeed * Time.deltaTime);
-        }
+    void ApplyTexture()
+    {
 
-        if (!p4Joined)
-        {
-            if (Input.GetButtonDown("Pickup_P4"))
-            {
-                p4Joined = true;
-                player4.GetComponent<Player>().SetShirtColour(Color.yellow);
-
-            }
-        }
-        if (p4Joined)
-        {
-            player4.transform.position = Vector3.MoveTowards(player4.transform.position, p4Pos, moveSpeed * Time.deltaTime);
-        }
+        Sprite tempSprite = Sprite.Create(screenshotTex, new Rect(0, 0, screenshotTex.width, screenshotTex.height), new Vector2(0, 0));
+        FindObjectOfType<SpriteRenderer>().sprite = tempSprite;
     }
 }

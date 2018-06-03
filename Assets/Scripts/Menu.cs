@@ -29,8 +29,11 @@ public class Menu : MonoBehaviour
     bool menuAnim = true;
     public int houseHumber = 1;
 
-    public Texture2D screenshotTex;
-    public GameObject photoObject;
+    public Texture2D screenshot1Tex;
+    public Texture2D screenshot2Tex;
+
+    public SpriteRenderer house1Image;
+    public SpriteRenderer house2Image;
 
     static bool alreadySpawned = false;
     public static Menu originalMenu;
@@ -55,6 +58,11 @@ public class Menu : MonoBehaviour
             originalMenu.p4Joined = false;
 
             originalMenu.menuAnim = true;
+
+            originalMenu.house1Image = this.house1Image;
+            originalMenu.house2Image = this.house2Image;
+
+            FindObjectOfType<MenuButton>().menu = originalMenu;
 
             Destroy(gameObject);
         }
@@ -140,21 +148,35 @@ public class Menu : MonoBehaviour
     public void LoadMenu()
     {
         SceneManager.LoadScene("Menu");
-        Invoke("ApplyTexture", 2);
+        Invoke("ApplyTexture", 0.5f);
     }
 
     public void SetScreenShot(Texture2D image)
     {
-        screenshotTex = image;
-        
+        if (houseHumber == 1)
+        {
+            screenshot1Tex = image;
+        }
+        else
+        {
+            screenshot2Tex = image;
+
+        }
+
+
     }
 
     void ApplyTexture()
     {
-        if (screenshotTex != null)
+        if (screenshot1Tex != null)
         {
-            Sprite tempSprite = Sprite.Create(screenshotTex, new Rect(0, 0, screenshotTex.width, screenshotTex.height), new Vector2(0, 0));
-            FindObjectOfType<SpriteRenderer>().sprite = tempSprite;
+            Sprite tempSprite = Sprite.Create(screenshot1Tex, new Rect(0, 0, screenshot1Tex.width, screenshot1Tex.height), new Vector2(0, 0));
+            house1Image.sprite = tempSprite;
+        }
+        if (screenshot2Tex != null)
+        {
+            Sprite tempSprite = Sprite.Create(screenshot2Tex, new Rect(0, 0, screenshot2Tex.width, screenshot2Tex.height), new Vector2(0, 0));
+            house2Image.sprite = tempSprite;
         }
     }
 }

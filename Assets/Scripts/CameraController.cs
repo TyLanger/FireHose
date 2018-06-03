@@ -36,6 +36,8 @@ public class CameraController : MonoBehaviour {
     //Vector3 velocity = Vector3.zero;
     Camera cameraComponent;
 
+    public GameObject menuButton;
+
 	// Use this for initialization
 	void Start () {
 
@@ -289,8 +291,9 @@ public class CameraController : MonoBehaviour {
 
         FindObjectOfType<Menu>().SetScreenShot(screenImage);
 
-		byte[] imageBytes = screenImage.EncodeToPNG ();
-		System.IO.File.WriteAllBytes ("Screenshots/Screenshot.png", imageBytes);
-        
+        //byte[] imageBytes = screenImage.EncodeToPNG ();
+        //System.IO.File.WriteAllBytes ("Screenshots/Screenshot.png", imageBytes);
+
+        menuButton.SetActive(true);
 	}
 }

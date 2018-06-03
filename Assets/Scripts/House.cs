@@ -61,7 +61,12 @@ public class House : MonoBehaviour {
 	int numVictims = 3;
 	int numVictimsRescued = 0;
 
-	void Initialize()
+    AudioSource audioSource;
+    float minPitch = 0.6f;
+    float maxPitch = 1.5f;
+    //public AudioClip fireSmoulder;
+
+    void Initialize()
 	{
 		if (BlockParent != null) {
 			Destroy (BlockParent);
@@ -77,6 +82,8 @@ public class House : MonoBehaviour {
 				groundFloor [x, z] = Floor;
 			}
 		}
+        //audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
 	}
 
 	/// Instantiates all the objects to make the house
@@ -349,8 +356,9 @@ public class House : MonoBehaviour {
 		int z = UnityEngine.Random.Range (0, zSize);
 		Debug.Log ("Starting fire at " + x + ", " + z);
 		groundFloor [x,z].GetComponentInChildren<BuildingBlock> ().Burn (100);
-		//groundFloor[x,z].GetC
-	}
+        //groundFloor[x,z].GetC
+        audioSource.Play();
+    }
 
 	void PlaceRandomVictims()
 	{
@@ -386,16 +394,27 @@ public class House : MonoBehaviour {
 		}
 	}
 
+    void AdjustFireSound()
+    {
+        // raise the pitch more as more fires are started
+        // up to the max when the number of current fires equals the number of blocks needed to be destroyed
+        audioSource.pitch = Mathf.Lerp(minPitch, maxPitch, (float)(numFiresStarted-numFiresPutOut)/ ((xSize * zSize) * maxDestructionPercent));
+    }
+
 	void NewFireStarted()
 	{
 		numFiresStarted++;
-	}
+        AdjustFireSound();
+
+    }
 
 	void FirePutOut()
 	{
 		numFiresPutOut++;
-		if ((numFiresPutOut + numBlocksDestroyedByFire) == numFiresStarted) {
-			// all fires put out
+        AdjustFireSound(); ;
+        if ((numFiresPutOut + numBlocksDestroyedByFire) == numFiresStarted) {
+            // all fires put out
+            audioSource.Stop();
 			if (AllFiresPutOut != null) {
 				AllFiresPutOut (numFiresStarted, numFiresPutOut, numBlocksDestroyedByFire);
 			}
@@ -416,6 +435,11 @@ public class House : MonoBehaviour {
 	void BlockDestroyedByFire()
 	{
 		numBlocksDestroyedByFire++;
+        /*
+        if(numBlocksDestroyedByFire == 1)
+        {
+            audioSource.Play();
+        }*/
 		if (numBlocksDestroyedByFire > (xSize * zSize) * maxDestructionPercent && !gameLost) {
 			gameLost = true;
 			Debug.Log("You lose. "+numBlocksDestroyedByFire + " blocks destroyed by fire at "+Time.time);

@@ -195,7 +195,7 @@ public class House : MonoBehaviour {
         {
             for (int i = 0; i < numPlayers; i++)
             {
-                Invoke("StartFire", i*90);
+                Invoke("StartFire", i*45 + 45);
             }
             
         }

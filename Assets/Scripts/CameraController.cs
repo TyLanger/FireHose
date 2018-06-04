@@ -84,6 +84,7 @@ public class CameraController : MonoBehaviour {
 			if (photoGroundOffset.z == nearZ && transform.position.z > 4.9f && !tookPicture) {
 				// comes to rest for the near at about 4.9
 				// take a picture
+                
 				tookPicture = true;
 				StartCoroutine (TakePicture ());
 			}

@@ -371,6 +371,7 @@ public class House : MonoBehaviour {
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
+                audioSource.volume = 1;
             }
         }
     }
@@ -437,15 +438,26 @@ public class House : MonoBehaviour {
 	{
 		numFiresPutOut++;
         AdjustFireSound(); ;
-        if ((numFiresPutOut + numBlocksDestroyedByFire) == numFiresStarted) {
+        CheckIfAllFiresOut();
+	}
+
+    void CheckIfAllFiresOut()
+    {
+        // need to have everyone reescued first
+        // because new fires can pop up, but new people can't
+        if ((numFiresPutOut + numBlocksDestroyedByFire) == numFiresStarted)
+        {
             // all fires put out
             StartCoroutine(FadeFireSound());
-
-            if (AllFiresPutOut != null) {
-				AllFiresPutOut (numFiresStarted, numFiresPutOut, numBlocksDestroyedByFire);
-			}
-		}
-	}
+            if (numVictimsRescued == numVictims)
+            {
+                if (AllFiresPutOut != null)
+                {
+                    AllFiresPutOut(numFiresStarted, numFiresPutOut, numBlocksDestroyedByFire);
+                }
+            }
+        }
+    }
 
 	void VictimRescued()
 	{
@@ -455,6 +467,7 @@ public class House : MonoBehaviour {
 			if (AllVictimsRescued != null) {
 				AllVictimsRescued ();
 			}
+            CheckIfAllFiresOut();
 		}
 	}
 

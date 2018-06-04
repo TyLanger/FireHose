@@ -96,6 +96,7 @@ public class Menu : MonoBehaviour
             if (p1Joined)
             {
                 player1.transform.position = Vector3.MoveTowards(player1.transform.position, p1Pos, moveSpeed * Time.deltaTime);
+                //player1.GetComponent<Player>()
             }
 
             if (!p2Joined)

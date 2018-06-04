@@ -192,42 +192,43 @@ public class CameraController : MonoBehaviour {
 
         }
 
-        // start shrinking when this isn't true
-        minPosition -= new Vector3(2, 0, 2);
-        maxPosition -= new Vector3(-2, 0, -2);
-        shrinkFOV = true;
+        if (!growFOV)
+        {
+            // start shrinking when this isn't true
+            minPosition -= new Vector3(2, 0, 2);
+            maxPosition -= new Vector3(-2, 0, -2);
+            shrinkFOV = true;
 
-        if (minPosition.z < ((transform.position - groundOffset) + CornerPoints[0]).z)
-        {
-            // still too far out of bounds to shrink back
-            //shrinkFOV = false;
-        }
-        else
-        {
-            if (bottomOffset.z < 0)
+            if (minPosition.z < ((transform.position - groundOffset) + CornerPoints[0]).z)
             {
-                bottomOffset = Vector3.Lerp(bottomOffset, Vector3.zero, 0.1f);
+                // still too far out of bounds to shrink back
+                //shrinkFOV = false;
+            }
+            else
+            {
+                if (bottomOffset.z < 0)
+                {
+                    bottomOffset = Vector3.Lerp(bottomOffset, Vector3.zero, 0.1f);
+                }
+            }
+            if (maxPosition.z > ((transform.position - groundOffset) + bottomOffset + CornerPoints[1]).z)
+            {
+                // still too far out of bounds to shrink back
+                shrinkFOV = false;
+            }
+            else if (IsPointLeft((transform.position - groundOffset) + CornerPoints[0], (transform.position - groundOffset) + CornerPoints[1], minPosition))
+            {
+
+                shrinkFOV = false;
+
+            }
+            else if (!IsPointLeft((transform.position - groundOffset) + CornerPoints[3], (transform.position - groundOffset) + CornerPoints[2], maxPosition))
+            {
+
+                shrinkFOV = false;
+
             }
         }
-        if (maxPosition.z > ((transform.position - groundOffset)+ bottomOffset + CornerPoints[1]).z)
-        {
-            // still too far out of bounds to shrink back
-            shrinkFOV = false;
-        }
-        else if (IsPointLeft((transform.position - groundOffset) + CornerPoints[0], (transform.position - groundOffset) + CornerPoints[1], minPosition))
-        {
-
-            shrinkFOV = false;
-
-        }
-        else if (!IsPointLeft((transform.position - groundOffset) + CornerPoints[3], (transform.position - groundOffset) + CornerPoints[2], maxPosition))
-        {
-
-            shrinkFOV = false;
-
-        }
-
-
 
         if (growFOV && !gameOver)
         {

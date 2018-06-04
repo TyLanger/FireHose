@@ -23,7 +23,8 @@ public class CameraController : MonoBehaviour {
 	// partially cuts off the players' feet to center their heads
 	float photoAngle = -7;
     //float timeToMoveToEnd = 4;
-    //float endGameTime;
+    float endGameTime;
+    float picFailsafeTime = 10;
 
     float minFOV = 45;
     Vector3[] CornerPoints = new Vector3[4];
@@ -69,8 +70,10 @@ public class CameraController : MonoBehaviour {
 		if (gameOver) {
 			groundOffset = Vector3.Lerp(groundOffset, photoGroundOffset, Time.deltaTime * currentMoveSpeed);
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(photoAngle, 0, 0), Time.deltaTime * currentMoveSpeed);
-			if(transform.position.z < (-1.95f))
+			if(transform.position.z < (-1.95f) || Time.time > (endGameTime + picFailsafeTime))
 			{
+                // sometimes it doesn't make it to -1.95.
+                // I'm not sure why so it will definitely do it if enough time has passed
 				// when the camera gets close to the far position
 				// Which is about -2 z
 				// sits at -2 z
@@ -90,7 +93,7 @@ public class CameraController : MonoBehaviour {
 			// moves 10% of the distance, then 10% of the remaining distance, then 10% of the.....
 			transform.position = Vector3.Lerp (transform.position, focusPoint, Time.deltaTime * currentMoveSpeed);
 		
-
+        /*
 		if (Input.GetButtonDown ("Jump")) {
 
 			var camera = GetComponent<Camera> ();
@@ -108,6 +111,7 @@ public class CameraController : MonoBehaviour {
 				}
 			}
 		}
+        */
 	}
 
     void CalculateRelativeCorners()
@@ -276,7 +280,7 @@ public class CameraController : MonoBehaviour {
 	public void PhotoshootPosition()
 	{
 		gameOver = true;
-		//endGameTime = Time.time;
+		endGameTime = Time.time;
 	}
 
 	IEnumerator TakePicture()

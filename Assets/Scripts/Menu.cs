@@ -19,10 +19,12 @@ public class Menu : MonoBehaviour
     public Vector3 p3Pos;
     public Vector3 p4Pos;
 
-    bool p1Joined = false;
-    bool p2Joined = false;
-    bool p3Joined = false;
-    bool p4Joined = false;
+
+    public bool p1Joined = false;
+    public bool p2Joined = false;
+    public bool p3Joined = false;
+    public bool p4Joined = false;
+    public int numPlayers = 0;
 
     float moveSpeed = 6;
 
@@ -52,10 +54,13 @@ public class Menu : MonoBehaviour
             originalMenu.player3 = this.player3;
             originalMenu.player4 = this.player4;
 
+            /*
             originalMenu.p1Joined = false;
             originalMenu.p2Joined = false;
             originalMenu.p3Joined = false;
             originalMenu.p4Joined = false;
+            originalMenu.numPlayers = 0;
+            */
 
             originalMenu.menuAnim = true;
 
@@ -84,7 +89,7 @@ public class Menu : MonoBehaviour
                 {
                     p1Joined = true;
                     player1.GetComponent<Player>().SetShirtColour(Color.red);
-                    
+                    numPlayers++;
                     
                 }
             }
@@ -99,6 +104,7 @@ public class Menu : MonoBehaviour
                 {
                     p2Joined = true;
                     player2.GetComponent<Player>().SetShirtColour(Color.blue);
+                    numPlayers++;
 
                 }
             }
@@ -111,9 +117,9 @@ public class Menu : MonoBehaviour
             {
                 if (Input.GetButtonDown("Pickup_P3"))
                 {
-                    Debug.Log("P3");
                     p3Joined = true;
                     player3.GetComponent<Player>().SetShirtColour(Color.green);
+                    numPlayers++;
 
                 }
             }
@@ -128,6 +134,7 @@ public class Menu : MonoBehaviour
                 {
                     p4Joined = true;
                     player4.GetComponent<Player>().SetShirtColour(Color.yellow);
+                    numPlayers++;
 
                 }
             }

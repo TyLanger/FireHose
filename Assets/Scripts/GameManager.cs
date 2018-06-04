@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-		SpawnPlayers ();
+		
 		house.AllFiresPutOut += AllFiresPutOut;
 		house.AllVictimsRescued += AllVictimsRescued;
 		house.HouseDestroyedByFire += HouseDestroyedByFire;
@@ -59,7 +59,32 @@ public class GameManager : MonoBehaviour {
         minPlayerPos = Vector3.zero;
         maxPlayerPos = Vector3.zero;
 
-        StartHouse(FindObjectOfType<Menu>().houseHumber);
+        Menu menu = FindObjectOfType<Menu>();
+        numPlayers = menu.numPlayers;
+        StartHouse(menu.houseHumber, numPlayers);
+
+        p1Joined = menu.p1Joined;
+        p2Joined = menu.p2Joined;
+        p3Joined = menu.p3Joined;
+        p4Joined = menu.p4Joined;
+        SpawnPlayers();
+
+        if (p1Joined)
+        {
+            player1.Setup("Horizontal_P1", "Vertical_P1", "Pickup_P1", "Use_P1", 1);
+        }
+        if (p2Joined)
+        {
+            player2.Setup("Horizontal_P2", "Vertical_P2", "Pickup_P2", "Use_P2", 2);
+        }
+        if (p3Joined)
+        {
+            player3.Setup("Horizontal_P3", "Vertical_P3", "Pickup_P3", "Use_P3", 3);
+        }
+        if (p4Joined)
+        {
+            player4.Setup("Horizontal_P4", "Vertical_P4", "Pickup_P4", "Use_P4", 4);
+        }
 
     }
 
@@ -79,12 +104,13 @@ public class GameManager : MonoBehaviour {
 		}*/
 
 		// Joysticks are in the order they were plugged in
+        /*
 		if (!p1Joined) {
 			
 			if (Input.GetButtonDown ("Pickup_P1")) {
 				Debug.Log ("Player 1 joined");
 				p1Joined = true;
-				numPlayers++;
+				//numPlayers++;
 				// set up controls when you get input from the controller
 				player1.Setup ("Horizontal_P1", "Vertical_P1", "Pickup_P1", "Use_P1", 1);
 			}
@@ -93,7 +119,7 @@ public class GameManager : MonoBehaviour {
 			if (Input.GetButtonDown ("Pickup_P2")) {
 				Debug.Log ("Player 2 joined");
 				p2Joined = true;
-				numPlayers++;
+				//numPlayers++;
 
 				player2.Setup ("Horizontal_P2", "Vertical_P2", "Pickup_P2", "Use_P2", 2);
 			}
@@ -102,7 +128,7 @@ public class GameManager : MonoBehaviour {
 			if (Input.GetButtonDown ("Pickup_P3")) {
 				Debug.Log ("Player 3 joined");
 				p3Joined = true;
-				numPlayers++;
+				//numPlayers++;
 
 				player3.Setup ("Horizontal_P3", "Vertical_P3", "Pickup_P3", "Use_P3", 3);
 			}
@@ -111,17 +137,18 @@ public class GameManager : MonoBehaviour {
 			if (Input.GetButtonDown ("Fire1")) {
 				Debug.Log ("Keyboard as P4");
 				p4Joined = true;
-				numPlayers++;
+				//numPlayers++;
 				player4.Setup("Horizontal", "Vertical", "Fire1", "Fire2", 4);
 			}
 			if (Input.GetButtonDown ("Pickup_P4")) {
 				Debug.Log ("Player 4 joined");
 				p4Joined = true;
-				numPlayers++;
+				//numPlayers++;
 
 				player4.Setup ("Horizontal_P4", "Vertical_P4", "Pickup_P4", "Use_P4", 4);
 			}
 		}
+        */
 
         // adjust position of camera
 		cameraController.FocusOn (AveragePlayerLocation ());
@@ -135,32 +162,40 @@ public class GameManager : MonoBehaviour {
 
 	void SpawnPlayers()
 	{
-		// spawn all 4 characters at the start
-		// they only start to move once their respective joystick has been moved
-		// any characters not joined by the time the leve starts just get left behind at the fire hall
-		// they still exist in the world, but they'll just be napping at a table or something
-		player1 = Instantiate (player, p1Spawn, Quaternion.identity);
-		//player1.GetComponent<Renderer> ().material.color = Color.red;
-		player1.SetShirtColour (Color.red);
-
-		player2 = Instantiate (player, p2Spawn, Quaternion.identity);
-		//player2.GetComponent<Renderer> ().material.color = Color.blue;
-		player2.SetShirtColour (Color.blue);
-
-		player3 = Instantiate (player, p3Spawn, Quaternion.identity);
-		//player3.GetComponent<Renderer> ().material.color = Color.green;
-		player3.SetShirtColour (Color.green);
-
-		player4 = Instantiate (player, p4Spawn, Quaternion.identity);
-		//player4.GetComponent<Renderer> ().material.color = Color.yellow;
-		player4.SetShirtColour (Color.yellow);
-
+        // spawn all 4 characters at the start
+        // they only start to move once their respective joystick has been moved
+        // any characters not joined by the time the leve starts just get left behind at the fire hall
+        // they still exist in the world, but they'll just be napping at a table or something
+        if (p1Joined)
+        {
+            player1 = Instantiate(player, p1Spawn, Quaternion.identity);
+            //player1.GetComponent<Renderer> ().material.color = Color.red;
+            player1.SetShirtColour(Color.red);
+        }
+        if (p2Joined)
+        {
+            player2 = Instantiate(player, p2Spawn, Quaternion.identity);
+            //player2.GetComponent<Renderer> ().material.color = Color.blue;
+            player2.SetShirtColour(Color.blue);
+        }
+        if (p3Joined)
+        {
+            player3 = Instantiate(player, p3Spawn, Quaternion.identity);
+            //player3.GetComponent<Renderer> ().material.color = Color.green;
+            player3.SetShirtColour(Color.green);
+        }
+        if (p4Joined)
+        {
+            player4 = Instantiate(player, p4Spawn, Quaternion.identity);
+            //player4.GetComponent<Renderer> ().material.color = Color.yellow;
+            player4.SetShirtColour(Color.yellow);
+        }
 	}
 
 	Vector3 AveragePlayerLocation()
 	{
 		Vector3 average = Vector3.zero;
-		if (numPlayers > 0) {
+		if (numPlayers > 0 && (p1Joined || p2Joined || p3Joined || p4Joined)) {
 			
 			if (p1Joined) {
 				average += player1.transform.position;
@@ -177,11 +212,15 @@ public class GameManager : MonoBehaviour {
 
 			average = average / numPlayers;
 		} else {
-			average += player1.transform.position;
+            // this doesn't work anymore
+            // now that players are only spawned if they pressed a in the menu
+            /*
+            average += player1.transform.position;
 			average += player2.transform.position;
 			average += player3.transform.position;
 			average += player4.transform.position;
 			average = average / 4;
+            */
 		}
 		return average;
 	}
@@ -254,20 +293,43 @@ public class GameManager : MonoBehaviour {
 	{
 		Vector3 pos = house.transform.position + new Vector3 ((house.xSize/2) * house.gridSpacing, 0, -2);
 
-		// tell the players to stop moving
-		// if a player is using an axe when the game ends, they will keep moving....
-		// Going to need some way to stop this
-		player1.GameOver ();
-		player2.GameOver ();
-		player3.GameOver ();
-		player4.GameOver ();
+        // tell the players to stop moving
+        // if a player is using an axe when the game ends, they will keep moving....
+        // Going to need some way to stop this
+        if (p1Joined)
+        {
+            player1.GameOver();
+        }
+        if (p2Joined)
+        {
+            player2.GameOver();
+        }
+        if (p3Joined)
+        {
+            player3.GameOver();
+        }
+        if (p4Joined)
+        {
+            player4.GameOver();
+        }
 
-		// teleport the players
-		player1.transform.position = pos + new Vector3(-2, 0, 0);
-		player2.transform.position = pos + new Vector3(-1, 0, 0);
-		player3.transform.position = pos + new Vector3(0, 0, 0);
-		player4.transform.position = pos + new Vector3(1, 0, 0);
-
+        // teleport the players
+        if (p1Joined)
+        {
+            player1.transform.position = pos + new Vector3(-2, 0, 0);
+        }
+        if (p2Joined)
+        {
+            player2.transform.position = pos + new Vector3(-1, 0, 0);
+        }
+        if (p3Joined)
+        {
+            player3.transform.position = pos + new Vector3(0, 0, 0);
+        }
+        if (p4Joined)
+        {
+            player4.transform.position = pos + new Vector3(1, 0, 0);
+        }
 		//player1.transform.rotation = Quaternion.Euler (0, 180, 0);
 		//player2.transform.rotation = Quaternion.Euler (0, 180, 0);
 		//player3.transform.rotation = Quaternion.Euler (0, 180, 0);
@@ -278,7 +340,7 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-    public void StartHouse(int houseNum)
+    public void StartHouse(int houseNum, int numPlayers)
     {
         // start the game with the specified house setup
         if (houseNum == 1)
@@ -291,7 +353,7 @@ public class GameManager : MonoBehaviour {
             house.floorLayout = map2Layout;
             house.furnitureLayout = map2Furniture;
         }
-        house.CreateNewHouse(maxDestructionPercent);
+        house.CreateNewHouse(maxDestructionPercent, numPlayers);
     }
 
 	void GameWon()

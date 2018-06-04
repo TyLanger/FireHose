@@ -166,7 +166,7 @@ public class House : MonoBehaviour {
         }
     }
 
-    public void CreateNewHouse(float maxDestroyPercent)
+    public void CreateNewHouse(float maxDestroyPercent, int numPlayers)
 	{
 		// if this percent of blocks destroyed by fire is reached, the house is considered destroyed by fire
 		maxDestructionPercent = maxDestroyPercent;
@@ -187,9 +187,18 @@ public class House : MonoBehaviour {
 			PlaceFurnitureFromImage (transform.position, BlockParent.transform);
 		}
 
+        numVictims += (numPlayers-1) * 2;
 		PlaceRandomVictims();
 
 		StartFire ();
+        if(numPlayers > 1)
+        {
+            for (int i = 0; i < numPlayers; i++)
+            {
+                Invoke("StartFire", i*90);
+            }
+            
+        }
 
         BuildBoundaries(BlockParent.transform);
         MovePlanes();
@@ -352,12 +361,18 @@ public class House : MonoBehaviour {
 
 	void StartFire()
 	{
-		int x = UnityEngine.Random.Range (0, xSize);
-		int z = UnityEngine.Random.Range (0, zSize);
-		Debug.Log ("Starting fire at " + x + ", " + z);
-		groundFloor [x,z].GetComponentInChildren<BuildingBlock> ().Burn (100);
-        //groundFloor[x,z].GetC
-        audioSource.Play();
+        if (!gameLost)
+        {
+            int x = UnityEngine.Random.Range(0, xSize);
+            int z = UnityEngine.Random.Range(0, zSize);
+            Debug.Log("Starting fire at " + x + ", " + z);
+            groundFloor[x, z].GetComponentInChildren<BuildingBlock>().Burn(100);
+            //groundFloor[x,z].GetC
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
     }
 
 	void PlaceRandomVictims()

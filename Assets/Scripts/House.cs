@@ -401,6 +401,16 @@ public class House : MonoBehaviour {
         audioSource.pitch = Mathf.Lerp(minPitch, maxPitch, (float)(numFiresStarted-numFiresPutOut)/ ((xSize * zSize) * maxDestructionPercent));
     }
 
+    IEnumerator FadeFireSound()
+    {
+        while(audioSource.volume > 0)
+        {
+            audioSource.volume -= Time.fixedDeltaTime * 2;
+            yield return new WaitForFixedUpdate();
+        }
+        audioSource.Stop();
+    }
+
 	void NewFireStarted()
 	{
 		numFiresStarted++;
@@ -414,8 +424,9 @@ public class House : MonoBehaviour {
         AdjustFireSound(); ;
         if ((numFiresPutOut + numBlocksDestroyedByFire) == numFiresStarted) {
             // all fires put out
-            audioSource.Stop();
-			if (AllFiresPutOut != null) {
+            StartCoroutine(FadeFireSound());
+
+            if (AllFiresPutOut != null) {
 				AllFiresPutOut (numFiresStarted, numFiresPutOut, numBlocksDestroyedByFire);
 			}
 		}

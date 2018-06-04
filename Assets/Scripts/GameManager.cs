@@ -71,11 +71,12 @@ public class GameManager : MonoBehaviour {
 			house.CreateNewHouse (maxDestructionPercent);
 		}
         */
+        /*
 		if (Input.GetButtonDown ("Fire3")) {
             //TeleportPlayers ();
             GameWon();
             //Debug.Break();
-		}
+		}*/
 
 		// Joysticks are in the order they were plugged in
 		if (!p1Joined) {

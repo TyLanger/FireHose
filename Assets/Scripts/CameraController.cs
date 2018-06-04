@@ -69,7 +69,7 @@ public class CameraController : MonoBehaviour {
 		if (gameOver) {
 			groundOffset = Vector3.Lerp(groundOffset, photoGroundOffset, Time.deltaTime * currentMoveSpeed);
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(photoAngle, 0, 0), Time.deltaTime * currentMoveSpeed);
-			if(transform.position.z < (-2))
+			if(transform.position.z < (-1.95f))
 			{
 				// when the camera gets close to the far position
 				// Which is about -2 z

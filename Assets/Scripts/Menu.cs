@@ -81,6 +81,11 @@ public class Menu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetButtonDown("Cancel"))
+        {
+            Application.Quit();
+        }
+
         if (menuAnim)
         {
             if (!p1Joined)

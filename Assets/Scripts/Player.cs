@@ -87,7 +87,8 @@ public class Player : MonoBehaviour {
 	// the hp of the fire when you are set on fire
 	float fireHp = 20;
 
-    AudioSource audioSource;
+    AudioSource[] audioSources;
+    public AudioClip[] clips;
 
 	// Use this for initialization
 	void Start () {
@@ -110,7 +111,17 @@ public class Player : MonoBehaviour {
         int facing = (Random.Range(0, 2)*2) - 1;
         // random chance for the hair to point left or right
         heads[headNum].transform.localScale = new Vector3(heads[headNum].transform.localScale.x * facing, heads[headNum].transform.localScale.y, heads[headNum].transform.localScale.z);
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = GetComponent<AudioSource>();
+        audioSources = new AudioSource[2];
+        for (int i = 0; i < 2; i++)
+        {
+            audioSources[i] = gameObject.AddComponent<AudioSource>() as AudioSource;
+            audioSources[i].playOnAwake = false;
+            audioSources[i].clip = clips[i];
+        }
+        // break door sound
+        // same as axe break sound
+        audioSources[1].volume = 0.3f;
 	}
 	
 	// Update is called once per frame
@@ -318,6 +329,7 @@ public class Player : MonoBehaviour {
 							// hit a door
 							// try to break it down
 							hit.collider.GetComponent<BuildingBlock> ().Break (unarmedBreakStrength);
+                            audioSources[1].Play();
 						}
 					} else if (hit.collider.tag == "Fire") {
                         // players also have Fire on them
@@ -325,8 +337,9 @@ public class Player : MonoBehaviour {
                         {
                             // stomp out fire
                             hit.collider.GetComponentInParent<BuildingBlock>().PutOutFire(unarmedDouseStrength * Time.fixedDeltaTime);
+                            audioSources[1].Play();
                         }
-					}
+                    }
 				}
 			}
 
@@ -517,7 +530,7 @@ public class Player : MonoBehaviour {
 			PickUp ();
             SayMessage(onFireMessages[UnityEngine.Random.Range(0, onFireMessages.Length)]);
             timeOfNextQuip = Time.time + timeBetweenQuips + UnityEngine.Random.Range(0.0f, 2.0f);
-            audioSource.Play();
+            audioSources[0].Play();
 		}
 
 	}

@@ -62,9 +62,13 @@ public class Victim : Tool {
 		base.Start();
 		timeOfNextQuip = Random.Range (0, timeBetweenQuips);
 		StartCoroutine (RescueCheck ());
-	}
+        AddAudioSources(1);
+        audioSources[0].clip = clips[0];
+        audioSources[0].volume = 0.4f;
+        audioSources[0].pitch = 0.8f;
+    }
 
-	IEnumerator RescueCheck()
+    IEnumerator RescueCheck()
 	{
 		while (true) {
 			if (Time.time > timeOfNextQuip) {
@@ -140,6 +144,7 @@ public class Victim : Tool {
 
 	IEnumerator Toss()
 	{
+        audioSources[0].Play();
 		if (physicsObject != null) {
 			physicsObject.GetComponent<Rigidbody>().AddForce ((transform.forward + new Vector3 (0, 1, 0)) * throwForce);
 		}

@@ -87,6 +87,8 @@ public class Player : MonoBehaviour {
 	// the hp of the fire when you are set on fire
 	float fireHp = 20;
 
+    AudioSource audioSource;
+
 	// Use this for initialization
 	void Start () {
 		currentUsing = ToolType.None;
@@ -108,6 +110,7 @@ public class Player : MonoBehaviour {
         int facing = (Random.Range(0, 2)*2) - 1;
         // random chance for the hair to point left or right
         heads[headNum].transform.localScale = new Vector3(heads[headNum].transform.localScale.x * facing, heads[headNum].transform.localScale.y, heads[headNum].transform.localScale.z);
+        audioSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -514,6 +517,7 @@ public class Player : MonoBehaviour {
 			PickUp ();
             SayMessage(onFireMessages[UnityEngine.Random.Range(0, onFireMessages.Length)]);
             timeOfNextQuip = Time.time + timeBetweenQuips + UnityEngine.Random.Range(0.0f, 2.0f);
+            audioSource.Play();
 		}
 
 	}

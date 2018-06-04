@@ -70,7 +70,7 @@ public class CameraController : MonoBehaviour {
 		if (gameOver) {
 			groundOffset = Vector3.Lerp(groundOffset, photoGroundOffset, Time.deltaTime * currentMoveSpeed);
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(photoAngle, 0, 0), Time.deltaTime * currentMoveSpeed);
-			if(transform.position.z < (-1.95f) || Time.time > (endGameTime + picFailsafeTime))
+			if(transform.position.z < (-1.95f) )
 			{
                 // sometimes it doesn't make it to -1.95.
                 // I'm not sure why so it will definitely do it if enough time has passed
@@ -81,7 +81,7 @@ public class CameraController : MonoBehaviour {
 				// swap to the near position
 				photoGroundOffset = new Vector3 (photoGroundOffset.x, photoGroundOffset.y, nearZ);
 			}
-			if (photoGroundOffset.z == nearZ && transform.position.z > 4.9f && !tookPicture) {
+			if ((photoGroundOffset.z == nearZ && transform.position.z > 4.9f || Time.time > (endGameTime + picFailsafeTime)) && !tookPicture) {
 				// comes to rest for the near at about 4.9
 				// take a picture
                 
